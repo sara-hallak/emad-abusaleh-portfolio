@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  /* الخط الأساسي */
+  --font-scheherazade: var(--font-scheherazade), serif;
+
+  /* الألوان الأساسية للهوية البصرية */
+  --color-primary-blue: #1874C7;
+  --color-dark-blue: #014482;
+  --color-light-blue: #F0F7FF;
+  --color-text-gray: #4B5563;
+}
+
+html {
+  scroll-behavior: smooth;
+}
