@@ -174,11 +174,11 @@ export const Footer: React.FC = () => {
                 <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
               </SocialSquareLink>
 
-              <SocialSquareLink href="https://instagram.com" label="Instagram">
+              <SocialSquareLink href="https://www.instagram.com/emadabusaleh/" label="Instagram">
                 <InstagramIcon className="w-3.5 h-3.5 fill-current" />
               </SocialSquareLink>
 
-              <SocialSquareLink href="https://facebook.com" label="Facebook">
+              <SocialSquareLink href="https://www.facebook.com/E.AbuSaleh" label="Facebook">
                 <FacebookIcon className="w-3.5 h-3.5 fill-current" />
               </SocialSquareLink>
 

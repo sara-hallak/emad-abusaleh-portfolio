@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { Mail } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface HeroProps {
   onNavigateToContact?: () => void;
@@ -13,6 +15,9 @@ export const Hero: React.FC<HeroProps> = ({
   onNavigateToContact,
   onNavigateToProjects,
 }) => {
+  const pathname = usePathname();
+  const currentLang = pathname?.startsWith("/en") ? "en" : "ar";
+
   // تأثير الكتابة والحذف التلقائي لعبارة "نستحق وأكثر.."
   const fullText = "نستحق وأكثر..";
   const [displayedText, setDisplayedText] = useState("");
@@ -146,20 +151,21 @@ export const Hero: React.FC<HeroProps> = ({
               <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:scale-110" />
             </motion.button>
 
-            {/* رابط "استكشف الخبرات والمشاريع ←" */}
-            <motion.button
-              whileHover={{ x: -4 }}
-              onClick={() => handleScrollTo("projects", onNavigateToProjects)}
-              className="group inline-flex items-center gap-1.5 text-xs sm:text-base lg:text-lg font-semibold text-primary-blue hover:text-dark-blue transition-colors py-1.5 cursor-pointer"
-            >
-              <span className="relative">
-                استكشف الخبرات والمشاريع
-                <span className="absolute -bottom-1 inset-x-0 h-[1.5px] bg-dark-blue scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-right" />
-              </span>
-              <span className="text-base sm:text-lg transition-transform duration-300 group-hover:-translate-x-1.5">
-                ←
-              </span>
-            </motion.button>
+            {/* رابط "استكشف الخبرات والمشاريع ←" - ينقل لصفحة المشاريع مباشرة */}
+            <motion.div whileHover={{ x: -4 }} className="inline-block">
+              <Link
+                href={`/${currentLang}/projects`}
+                className="group inline-flex items-center gap-1.5 text-xs sm:text-base lg:text-lg font-semibold text-primary-blue hover:text-dark-blue transition-colors py-1.5 cursor-pointer"
+              >
+                <span className="relative">
+                  استكشف الخبرات والمشاريع
+                  <span className="absolute -bottom-1 inset-x-0 h-[1.5px] bg-dark-blue scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-right" />
+                </span>
+                <span className="text-base sm:text-lg transition-transform duration-300 group-hover:-translate-x-1.5">
+                  ←
+                </span>
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -173,7 +179,6 @@ export const Hero: React.FC<HeroProps> = ({
         className="fixed left-3 lg:left-6 top-1/2 -translate-y-1/2 z-40 hidden sm:flex flex-col items-center"
       >
         <div className="flex flex-col items-center gap-2.5 py-3.5 px-2 rounded-full bg-gradient-to-b from-primary-blue to-dark-blue shadow-xl shadow-blue-950/25 border border-white/20 backdrop-blur-md">
-          {/* النقطة الزخرفية العلوية */}
           <span className="w-1.5 h-1.5 rounded-full bg-white/70 mb-0.5" />
 
           {/* LinkedIn */}
@@ -184,32 +189,31 @@ export const Hero: React.FC<HeroProps> = ({
           </SocialIconLink>
 
           {/* Instagram */}
-          <SocialIconLink href="https://instagram.com" label="Instagram">
+          <SocialIconLink href="https://www.instagram.com/emadabusaleh/" label="Instagram">
             <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
             </svg>
           </SocialIconLink>
 
           {/* Facebook */}
-          <SocialIconLink href="https://facebook.com" label="Facebook">
+          <SocialIconLink href="https://www.facebook.com/E.AbuSaleh" label="Facebook">
             <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
             </svg>
           </SocialIconLink>
 
           {/* WhatsApp */}
-          <SocialIconLink href="https://wa.me/" label="WhatsApp">
+          <SocialIconLink href="https://wa.me/962799047357" label="WhatsApp">
             <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
               <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.126.556 4.124 1.535 5.86L0 24l6.335-1.652c1.694.922 3.633 1.448 5.696 1.448 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
             </svg>
           </SocialIconLink>
 
-          {/* النقطة الزخرفية السفلية */}
           <span className="w-1.5 h-1.5 rounded-full bg-white/70 mt-0.5" />
         </div>
       </motion.aside>
 
-      {/* شريط التواصل للموبايل (يظهر تحت القسم في الشاشات الصغيرة) */}
+      {/* شريط التواصل للموبايل */}
       <div className="sm:hidden px-6 pb-5 pt-2 flex items-center justify-center">
         <div className="inline-flex items-center gap-2.5 py-1.5 px-3.5 rounded-full bg-gradient-to-r from-primary-blue to-dark-blue shadow-md">
           <SocialIconLink href="https://linkedin.com" label="LinkedIn">
@@ -238,7 +242,7 @@ export const Hero: React.FC<HeroProps> = ({
   );
 };
 
-/* مكون فرعي لأزرار التواصل الدائرية مع الهوفر والأنيميشن */
+/* مكون فرعي لأزرار التواصل الدائرية */
 function SocialIconLink({
   href,
   label,

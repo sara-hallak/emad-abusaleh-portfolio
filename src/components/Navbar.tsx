@@ -38,7 +38,12 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // قائمة الروابط الرئيسية مطابقة للتصميم ومربوطة بالصفحات الجديدة
+  // إغلاق قائمة الموبايل تلقائياً عند تغيير المسار
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  // قائمة الروابط الرئيسية
   const navLinks = [
     {
       id: "home",
@@ -49,8 +54,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     {
       id: "about",
       label: "عن عماد",
-      href: isHome ? "#about" : `/${currentLang}#about`,
-      isActive: isHome && activeSection === "about",
+      href: `/${currentLang}/about`,
+      isActive: pathname?.startsWith(`/${currentLang}/about`),
     },
     {
       id: "services",
@@ -93,8 +98,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`sticky top-0 w-full z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-white/85 backdrop-blur-md shadow-xs border-b border-gray-100/90 py-0"
-          : "bg-white/95 backdrop-blur-xs border-b border-gray-100/70 py-1"
+          ? "bg-white/90 backdrop-blur-md shadow-xs border-b border-slate-100 py-0"
+          : "bg-white/95 backdrop-blur-xs border-b border-slate-100/80 py-1"
       }`}
       dir="rtl"
     >
@@ -149,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* أزرار اليسار: مبدل اللغة + زر تواصل معنا */}
+        {/* أزرار اليسار لسطح المكتب: مبدل اللغة + زر تواصل معنا */}
         <div className="hidden sm:flex items-center gap-3">
           {/* زر تبديل اللغة */}
           <Link
@@ -183,38 +188,44 @@ export const Navbar: React.FC<NavbarProps> = ({
           </Link>
         </div>
 
-        {/* أزرار الموبايل */}
+        {/* أزرار رأس الصفحة على الموبايل */}
         <div className="lg:hidden flex items-center gap-2">
+          {/* زر تبديل اللغة المصغر */}
           <Link
             href={switchLangPath}
-            className="sm:hidden inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-gray-200 text-[#014482] text-xs font-sans font-semibold"
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-slate-200 text-[#014482] text-xs font-sans font-semibold bg-slate-50/80 active:bg-slate-100"
           >
             <Globe className="w-3 h-3 text-[#1874C7]" />
             <span>{currentLang === "ar" ? "EN" : "AR"}</span>
           </Link>
 
+          {/* زر فتح/إغلاق القائمة */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 text-[#014482] hover:bg-slate-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1874C7]/30 transition-colors"
+            className="p-2 text-[#014482] hover:bg-slate-50 active:bg-slate-100 rounded-xl focus:outline-none transition-colors"
             aria-label={mobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة الرئيسية"}
             aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-5 h-5 text-[#1874C7]" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      {/* قائمة الموبايل المنسدلة */}
+      {/* ========================================================
+          قائمة الموبايل المنسدلة بتصميم لطيف وناعم
+          ======================================================== */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: "easeInOut" }}
-            className="lg:hidden overflow-hidden border-b border-gray-200 bg-white/95 backdrop-blur-md shadow-lg"
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="lg:hidden overflow-hidden border-b border-slate-200/80 bg-white/98 backdrop-blur-xl shadow-xl shadow-blue-950/5 rounded-b-3xl"
           >
-            <div className="px-5 py-4 flex flex-col gap-1">
+            <div className="px-5 pt-3 pb-6 flex flex-col gap-1.5">
+              
+              {/* روابط القائمة */}
               {navLinks.map((link) => {
                 const active = link.isActive;
                 return (
@@ -222,36 +233,37 @@ export const Navbar: React.FC<NavbarProps> = ({
                     key={link.id}
                     href={link.href}
                     onClick={(e) => handleAnchorClick(e, link.href)}
-                    className={`w-full text-start py-2.5 px-3 rounded-lg text-base font-scheherazade transition-colors block ${
+                    className={`w-full flex items-center justify-between py-2.5 px-3.5 rounded-xl text-[17px] font-scheherazade transition-all duration-200 ${
                       active
-                        ? "bg-blue-50 text-[#1874C7] font-bold"
-                        : "text-[#014482] hover:bg-gray-50"
+                        ? "bg-blue-50/90 text-[#1874C7] font-bold"
+                        : "text-[#014482] hover:bg-slate-50 active:bg-slate-100 font-medium"
                     }`}
                   >
-                    {link.label}
+                    <span>{link.label}</span>
+                    {active && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#1874C7]" />
+                    )}
                   </Link>
                 );
               })}
 
-              <div className="pt-3 mt-2 border-t border-gray-100 flex flex-col gap-2.5">
+              {/* قسم الإجراء والتواصل بالأسفل (بدون عبارة نستحق وأكثر) */}
+              <div className="pt-4 mt-2 border-t border-slate-100 flex flex-col gap-3">
                 <Link
                   href={`/${currentLang}/contact`}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-2.5 rounded-xl bg-[#1874C7] hover:bg-[#014482] text-white font-semibold text-sm text-center transition-colors shadow-xs block"
+                  className="w-full py-3 rounded-xl bg-[#014482] hover:bg-[#1874C7] active:scale-[0.99] text-white font-sans font-medium text-xs sm:text-sm text-center transition-all shadow-xs"
                 >
                   تواصل معنا
                 </Link>
 
-                <div className="flex items-center justify-between text-xs text-gray-500 px-1 pt-1">
-                  <span className="flex items-center gap-1.5 font-sans">
-                    <Mail className="w-3.5 h-3.5 text-[#1874C7]" />
-                    contact@emadabusaleh.com
-                  </span>
-                  <span className="font-scheherazade text-sm text-[#014482] font-bold">
-                    نستحق وأكثر...
-                  </span>
+                {/* البريد الإلكتروني بشكل هادئ وناعم */}
+                <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 font-sans pt-1">
+                  <Mail className="w-3.5 h-3.5 text-slate-400" />
+                  <span>emad.abusaleh@gmail.com</span>
                 </div>
               </div>
+
             </div>
           </motion.div>
         )}
