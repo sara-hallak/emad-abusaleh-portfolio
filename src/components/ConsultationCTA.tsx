@@ -3,8 +3,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Mail, Clock, Globe, Lock } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { getTranslations } from "@/data/translations";
 
-// أيقونة واتساب الرسمية
 function WhatsAppIcon({ className = "w-4 h-4 fill-current" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24">
@@ -14,104 +15,152 @@ function WhatsAppIcon({ className = "w-4 h-4 fill-current" }: { className?: stri
 }
 
 export const ConsultationCTA: React.FC = () => {
-  // يمكنك استبدال الرقم برقم الواتساب الخاص بك لاحقاً
-  const whatsappUrl = "https://wa.me/?text=" + encodeURIComponent("مرحباً أ. عماد، أود التنسيق لمكالمة استشارية.");
+  const pathname = usePathname();
+  const currentLang = pathname?.startsWith("/en") ? "en" : "ar";
+  const isEn = currentLang === "en";
+
+  const t = getTranslations(currentLang);
+
+  const whatsappUrl =
+    "https://wa.me/962799047357?text=" + encodeURIComponent(t.cta.whatsappMessage);
 
   return (
-    <section id="contact" className="w-full bg-white py-12 sm:py-16 lg:py-20 overflow-hidden">
+    <section
+      id="contact"
+      className="w-full bg-white py-12 sm:py-16 lg:py-20 overflow-hidden"
+      dir={isEn ? "ltr" : "rtl"}
+    >
       <div className="max-w-[1260px] mx-auto px-4 sm:px-6 lg:px-12">
         
-        {/* الحاوية البيضاء الرئيسية مع الخط الأزرق على الحافة اليمنى */}
+        {/* الحاوية البيضاء الرئيسية: الخط الجانبي ينقلب تلقائياً لليمين بالعربي ولليسار بالإنجليزي */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-          className="relative bg-white rounded-[24px] sm:rounded-[28px] border border-gray-100 border-r-[5px] border-r-primary-blue shadow-lg shadow-blue-950/5 p-6 sm:p-8 lg:p-12 overflow-hidden"
+          className={`relative bg-white rounded-[24px] sm:rounded-[28px] border border-slate-200/90 shadow-lg shadow-blue-950/5 p-6 sm:p-8 lg:p-12 overflow-hidden ${
+            isEn ? "border-s-[5px] border-s-[#1874C7]" : "border-r-[5px] border-r-[#1874C7]"
+          }`}
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             
-            {/* العمود الأيمن (النصوص والأزرار) */}
+            {/* الطرف الأول: النصوص والأزرار */}
             <div className="lg:col-span-7 flex flex-col text-start">
-              <span className="text-xs sm:text-sm font-semibold text-primary-blue mb-2 block">
-                حجز موعد واستشارة
+              <span className="text-xs sm:text-sm font-semibold text-[#1874C7] mb-2 block font-sans">
+                {t.cta.tag}
               </span>
 
-              <h2 className="font-scheherazade text-3xl sm:text-4xl lg:text-[46px] font-bold text-dark-blue leading-[1.2] mb-3.5">
-                هل لديك مشروع ترغب في تحويله إلى خطة عمل؟
+              <h2
+                className={`font-bold text-[#014482] leading-[1.25] mb-3.5 ${
+                  isEn
+                    ? "font-sans text-2xl sm:text-3xl lg:text-[40px]"
+                    : "font-scheherazade text-3xl sm:text-4xl lg:text-[46px]"
+                }`}
+              >
+                {t.cta.title}
               </h2>
 
-              <p className="font-scheherazade text-sm sm:text-base lg:text-[18px] text-gray-600 leading-relaxed font-normal mb-8 max-w-xl">
-                سواء كنت تبحث عن استشارة لتصميم حملة كسب تأييد، مراجعة استراتيجية، أو تنظيم برنامج تدريبي لفريقك، يسعدني التحدث معك واستكشاف سبل التعاون.
+              <p
+                className={`text-slate-600 leading-relaxed font-normal mb-8 max-w-xl ${
+                  isEn
+                    ? "font-sans text-xs sm:text-sm lg:text-[15px]"
+                    : "font-scheherazade text-sm sm:text-base lg:text-[18px]"
+                }`}
+              >
+                {t.cta.desc}
               </p>
 
-              {/* أزرار العمل المشتركة */}
-              <div className="flex flex-wrap items-center gap-3.5 sm:gap-4">
-                {/* زر إرسال بريد إلكتروني مباشر */}
+              {/* أزرار التواصل */}
+              <div className="flex flex-wrap items-center gap-3.5 sm:gap-4 font-sans">
+                {/* زر البريد الإلكتروني */}
                 <motion.a
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  href="mailto:contact@emadabusaleh.com"
-                  className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-primary-blue hover:bg-dark-blue text-white font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-sm shadow-primary-blue/20 cursor-pointer"
+                  href="mailto:emad.abusaleh@gmail.com"
+                  className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-[#1874C7] hover:bg-[#014482] text-white font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-sm shadow-blue-500/20 cursor-pointer"
                 >
                   <Mail className="w-4 h-4" />
-                  <span>إرسال بريد إلكتروني مباشر</span>
+                  <span>{t.cta.emailBtn}</span>
                 </motion.a>
 
-                {/* زر مكالمة استشارية عبر واتساب */}
+                {/* زر الواتساب */}
                 <motion.a
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-primary-blue hover:bg-dark-blue text-white font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-sm shadow-primary-blue/20 cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-[#014482] hover:bg-[#1874C7] text-white font-semibold text-xs sm:text-sm transition-colors duration-200 shadow-sm shadow-blue-900/20 cursor-pointer"
                 >
                   <WhatsAppIcon className="w-4 h-4 fill-white" />
-                  <span>مكالمة استشارية عبر واتساب</span>
+                  <span>{t.cta.whatsappBtn}</span>
                 </motion.a>
               </div>
             </div>
 
-            {/* العمود الأيسر (بطاقة معلومات الاستجابة الزرقاء) */}
+            {/* الطرف الثاني: بطاقة معلومات الاستجابة الزرقاء */}
             <div className="lg:col-span-5 w-full">
               <motion.div
                 whileHover={{ y: -3 }}
                 transition={{ duration: 0.3 }}
-                className="bg-primary-blue rounded-[20px] p-6 sm:p-7 text-white shadow-md shadow-primary-blue/25"
+                className="bg-[#1874C7] rounded-[20px] p-6 sm:p-7 text-white shadow-md shadow-blue-500/25"
               >
-                <h3 className="font-scheherazade text-xl sm:text-2xl font-bold mb-3 pb-2.5 border-b border-white/20 text-start">
-                  معلومات الاستجابة والتواصل
+                <h3
+                  className={`font-bold mb-3 pb-2.5 border-b border-white/20 text-start ${
+                    isEn
+                      ? "font-sans text-base sm:text-lg"
+                      : "font-scheherazade text-xl sm:text-2xl"
+                  }`}
+                >
+                  {t.cta.cardTitle}
                 </h3>
 
                 <div className="space-y-4 pt-1 text-start">
                   <div>
-                    <div className="flex items-center gap-2 font-semibold text-xs sm:text-sm mb-1 text-white">
+                    <div className="flex items-center gap-2 font-semibold text-xs sm:text-sm mb-1 text-white font-sans">
                       <Clock className="w-4 h-4 text-blue-100" />
-                      <span>سرعة الرد:</span>
+                      <span>{t.cta.responseTimeTitle}</span>
                     </div>
-                    <p className="font-scheherazade text-xs sm:text-[13px] text-white/90 leading-relaxed ps-6">
-                      يتم الرد على جميع الاستفسارات خلال 24 إلى 48 ساعة كحد أقصى.
+                    <p
+                      className={`text-white/90 leading-relaxed ps-6 ${
+                        isEn
+                          ? "font-sans text-xs leading-[1.5]"
+                          : "font-scheherazade text-xs sm:text-[13px]"
+                      }`}
+                    >
+                      {t.cta.responseTimeDesc}
                     </p>
                   </div>
 
                   <div>
-                    <div className="flex items-center gap-2 font-semibold text-xs sm:text-sm mb-1 text-white">
+                    <div className="flex items-center gap-2 font-semibold text-xs sm:text-sm mb-1 text-white font-sans">
                       <Globe className="w-4 h-4 text-blue-100" />
-                      <span>نطاق العمل:</span>
+                      <span>{t.cta.scopeTitle}</span>
                     </div>
-                    <p className="font-scheherazade text-xs sm:text-[13px] text-white/90 leading-relaxed ps-6">
-                      حضوري في الأردن / وعن بُعد لجميع دول المنطقة.
+                    <p
+                      className={`text-white/90 leading-relaxed ps-6 ${
+                        isEn
+                          ? "font-sans text-xs leading-[1.5]"
+                          : "font-scheherazade text-xs sm:text-[13px]"
+                      }`}
+                    >
+                      {t.cta.scopeDesc}
                     </p>
                   </div>
 
                   <div>
-                    <div className="flex items-center gap-2 font-semibold text-xs sm:text-sm mb-1 text-white">
+                    <div className="flex items-center gap-2 font-semibold text-xs sm:text-sm mb-1 text-white font-sans">
                       <Lock className="w-4 h-4 text-blue-100" />
-                      <span>سرية البيانات:</span>
+                      <span>{t.cta.confidentialityTitle}</span>
                     </div>
-                    <p className="font-scheherazade text-xs sm:text-[13px] text-white/90 leading-relaxed ps-6">
-                      نلتزم بالسرية المهنية التامة لكافة الوثائق والمعلومات المشتركة.
+                    <p
+                      className={`text-white/90 leading-relaxed ps-6 ${
+                        isEn
+                          ? "font-sans text-xs leading-[1.5]"
+                          : "font-scheherazade text-xs sm:text-[13px]"
+                      }`}
+                    >
+                      {t.cta.confidentialityDesc}
                     </p>
                   </div>
                 </div>

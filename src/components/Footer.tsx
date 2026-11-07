@@ -2,13 +2,10 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, ChevronLeft } from "lucide-react";
+import { Mail, Phone, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-// ==========================================
-// أيقونات منصات التواصل الدقيقة
-// ==========================================
+import { getTranslations } from "@/data/translations";
 
 function LinkedinIcon({ className = "w-4 h-4 fill-current" }: { className?: string }) {
   return (
@@ -45,63 +42,73 @@ function FacebookIcon({ className = "w-4 h-4 fill-current" }: { className?: stri
 export const Footer: React.FC = () => {
   const pathname = usePathname();
   const currentLang = pathname?.startsWith("/en") ? "en" : "ar";
-  const isHome = pathname === `/${currentLang}` || pathname === `/${currentLang}/`;
+  const isEn = currentLang === "en";
 
-  // قائمة الروابط السريعة مربوطة بمسارات الصفحات الفعلية
+  const t = getTranslations(currentLang);
+
   const quickLinks = [
-    { label: "الرئيسية", href: `/${currentLang}` },
-    { label: "الخدمات", href: `/${currentLang}/services` },
-    { label: "الخبرات والمشاريع", href: `/${currentLang}/projects` },
-    { label: "الأدلة والمعرفة", href: `/${currentLang}/guides` },
-    { label: "عن عماد", href: isHome ? "#about" : `/${currentLang}#about` },
-    { label: "تواصل مع عماد", href: `/${currentLang}/contact` },
+    { label: t.footer.links.home, href: `/${currentLang}` },
+    { label: t.footer.links.services, href: `/${currentLang}/services` },
+    { label: t.footer.links.projects, href: `/${currentLang}/projects` },
+    { label: t.footer.links.guides, href: `/${currentLang}/guides` },
+    { label: t.footer.links.about, href: `/${currentLang}/about` },
+    { label: t.footer.links.contact, href: `/${currentLang}/contact` },
   ];
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href.startsWith("#")) {
-      e.preventDefault();
-      const targetId = href.replace("#", "");
-      const elem = document.getElementById(targetId);
-      if (elem) {
-        elem.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  };
-
   return (
-    <footer className="w-full bg-[#014482] text-white pt-14 pb-8 overflow-hidden select-none" dir="rtl">
+    <footer
+      className="w-full bg-[#014482] text-white pt-14 pb-8 overflow-hidden select-none"
+      dir={isEn ? "ltr" : "rtl"}
+    >
       <div className="max-w-[1260px] mx-auto px-4 sm:px-6 lg:px-12">
         
         {/* الأعمدة الثلاثة الرئيسية */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-8 items-start text-start pb-12">
           
-          {/* العمود 1 (اليمين في RTL): الهوية والتعريف */}
+          {/* العمود 1: الهوية والتعريف */}
           <div className="md:col-span-5 lg:col-span-5 flex flex-col">
             <Link href={`/${currentLang}`}>
-              <h2 className="font-scheherazade text-3xl sm:text-4xl lg:text-[42px] font-bold text-white mb-2 leading-tight hover:text-[#1874C7] transition-colors cursor-pointer">
-                عماد أبو صالح الفناطسة
+              <h2
+                className={`font-bold text-white mb-2 leading-tight hover:text-[#1874C7] transition-colors cursor-pointer ${
+                  isEn
+                    ? "font-sans text-xl sm:text-2xl lg:text-[26px]"
+                    : "font-scheherazade text-3xl sm:text-4xl lg:text-[42px]"
+                }`}
+              >
+                {t.brand.name}
               </h2>
             </Link>
             
-            {/* الشعار مع النقطة الزرقاء */}
             <div className="flex items-center gap-2 mb-3">
               <span className="w-2 h-2 rounded-full bg-[#1874C7] shrink-0" />
-              <span className="font-scheherazade text-base sm:text-lg font-bold text-blue-100">
-                التخطيط وقيادة حملات كسب التأييد والمناصرة
+              <span
+                className={`font-bold text-blue-100 ${
+                  isEn ? "font-sans text-xs sm:text-sm" : "font-scheherazade text-base sm:text-lg"
+                }`}
+              >
+                {t.footer.tagline}
               </span>
             </div>
 
-            <p className="font-scheherazade text-xs sm:text-sm text-[#B0C9E2] leading-relaxed max-w-sm font-normal">
-              خبرة عملية في التخطيط، التدريب، إعداد الأدلة والإرشاد المهني.
+            <p
+              className={`text-[#B0C9E2] leading-relaxed max-w-sm font-normal ${
+                isEn ? "font-sans text-xs leading-[1.6]" : "font-scheherazade text-xs sm:text-sm"
+              }`}
+            >
+              {t.footer.bio}
             </p>
           </div>
 
-          {/* العمود 2 (الوسط): روابط سريعة للمواقع والصفحات */}
-          <div className="md:col-span-3 lg:col-span-3 flex flex-col md:ps-4">
+          {/* العمود 2: روابط سريعة */}
+          <div className={`md:col-span-3 lg:col-span-3 flex flex-col ${isEn ? "md:ps-6" : "md:ps-4"}`}>
             <div className="flex items-center gap-2 mb-4">
               <span className="w-6 h-[2px] bg-[#1874C7] rounded-full" />
-              <h3 className="font-scheherazade text-xl font-bold text-white">
-                روابط سريعة
+              <h3
+                className={`font-bold text-white ${
+                  isEn ? "font-sans text-base sm:text-lg" : "font-scheherazade text-xl"
+                }`}
+              >
+                {t.footer.quickLinksTitle}
               </h3>
             </div>
 
@@ -110,13 +117,15 @@ export const Footer: React.FC = () => {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    onClick={(e) => handleLinkClick(e, link.href)}
-                    className="group inline-flex items-center gap-2 font-scheherazade text-sm sm:text-[15px] text-[#B0C9E2] hover:text-white transition-colors cursor-pointer text-start"
+                    className={`group inline-flex items-center gap-2 text-[#B0C9E2] hover:text-white transition-colors cursor-pointer text-start ${
+                      isEn ? "font-sans text-xs sm:text-sm" : "font-scheherazade text-sm sm:text-[15px]"
+                    }`}
                   >
-                    {/* السهم في البداية أولاً */}
-                    <ChevronLeft className="w-3.5 h-3.5 text-[#1874C7] shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
-                    
-                    {/* اسم الصفحة */}
+                    {isEn ? (
+                      <ChevronRight className="w-3.5 h-3.5 text-[#1874C7] shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
+                    ) : (
+                      <ChevronLeft className="w-3.5 h-3.5 text-[#1874C7] shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
+                    )}
                     <span>{link.label}</span>
                   </Link>
                 </li>
@@ -124,16 +133,20 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* العمود 3 (اليسار): بيانات التواصل والمنصات */}
+          {/* العمود 3: بيانات التواصل والمنصات */}
           <div className="md:col-span-4 lg:col-span-4 flex flex-col">
             <div className="flex items-center gap-2 mb-4">
               <span className="w-6 h-[2px] bg-[#1874C7] rounded-full" />
-              <h3 className="font-scheherazade text-xl font-bold text-white">
-                تواصل
+              <h3
+                className={`font-bold text-white ${
+                  isEn ? "font-sans text-base sm:text-lg" : "font-scheherazade text-xl"
+                }`}
+              >
+                {t.footer.contactTitle}
               </h3>
             </div>
 
-            {/* صف البريد الإلكتروني */}
+            {/* البريد الإلكتروني */}
             <a
               href="mailto:emad.abusaleh@gmail.com"
               className="group flex items-center justify-start gap-3 mb-3 text-start"
@@ -146,7 +159,7 @@ export const Footer: React.FC = () => {
               </span>
             </a>
 
-            {/* صف رقم الهاتف */}
+            {/* رقم الهاتف */}
             <a
               href="tel:+962799047357"
               className="group flex items-center justify-start gap-3 mb-5 text-start"
@@ -160,11 +173,15 @@ export const Footer: React.FC = () => {
             </a>
 
             {/* عنوان المنصات */}
-            <span className="font-scheherazade text-xs text-[#8EAECF] mb-2.5 block text-start">
-              قنوات التواصل والمنصات المهنية
+            <span
+              className={`text-[#8EAECF] mb-2.5 block text-start ${
+                isEn ? "font-sans text-[11px]" : "font-scheherazade text-xs"
+              }`}
+            >
+              {t.footer.channelsTitle}
             </span>
 
-            {/* أزرار المنصات في مربعات صغيرة ناعمة */}
+            {/* أزرار المنصات */}
             <div className="flex items-center gap-2">
               <SocialSquareLink href="https://www.linkedin.com/in/emad-abusaleh" label="LinkedIn">
                 <LinkedinIcon className="w-3.5 h-3.5 fill-current" />
@@ -196,8 +213,12 @@ export const Footer: React.FC = () => {
 
         {/* الشريط السفلي وحقوق النشر */}
         <div className="pt-6 border-t border-white/10 text-center">
-          <p className="font-scheherazade text-xs sm:text-sm text-[#8EAECF]">
-            © 2026 عماد أبو صالح. جميع الحقوق محفوظة.
+          <p
+            className={`text-[#8EAECF] ${
+              isEn ? "font-sans text-xs" : "font-scheherazade text-xs sm:text-sm"
+            }`}
+          >
+            {t.footer.copyright}
           </p>
         </div>
 

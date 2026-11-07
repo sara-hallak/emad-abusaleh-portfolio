@@ -2,40 +2,26 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { getTranslations } from "@/data/translations";
 
 interface GuidesHeroProps {
   lang?: string;
 }
 
-export default function GuidesHero({ lang = "ar" }: GuidesHeroProps) {
-  const isRtl = lang !== "en";
+export default function GuidesHero({ lang }: GuidesHeroProps) {
+  const pathname = usePathname();
+  const currentLang = lang || (pathname?.startsWith("/en") ? "en" : "ar");
+  const isEn = currentLang === "en";
 
-  // إحصائيات وميزات الشريط السفلي الشفاف
-  const heroMetrics = [
-    {
-      id: "metric-1",
-      val: "10+",
-      label: "أدلة إجرائية",
-    },
-    {
-      id: "metric-2",
-      val: "المؤسسات",
-      label: "واعتمادات دولية",
-    },
-    {
-      id: "metric-3",
-      val: "دوري مستمر",
-      label: "للممارسات والأدلة",
-    },
-    {
-      id: "metric-4",
-      val: "منهجية معيارية",
-      label: "محكّمة ميدانياً",
-    },
-  ];
+  const t = getTranslations(currentLang);
+  const heroContent = t.guidesHero;
 
   return (
-    <section className="relative w-full min-h-[580px] lg:min-h-[640px] flex items-center overflow-hidden bg-[#014482]">
+    <section
+      className="relative w-full min-h-[560px] lg:min-h-[620px] flex items-center overflow-hidden bg-[#014482]"
+      dir={isEn ? "ltr" : "rtl"}
+    >
       {/* 1. صورة الخلفية مع تأثير تكبير بطيء وناعم */}
       <motion.div
         initial={{ scale: 1.08 }}
@@ -45,16 +31,18 @@ export default function GuidesHero({ lang = "ar" }: GuidesHeroProps) {
       >
         <img
           src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=2000&q=85"
-          alt="أدلة ومعرفة مهنية"
+          alt="Professional Knowledge Base"
           className="w-full h-full object-cover object-center"
         />
       </motion.div>
 
-      {/* 2. الطبقة الزرقاء الملكية الشفافة والعميقة (Figma Overlay) */}
+      {/* 2. الطبقة الزرقاء الملكية الشفافة والعميقة */}
       <div 
         className="absolute inset-0 z-10 pointer-events-none"
         style={{
-          background: "linear-gradient(135deg, rgba(1, 68, 130, 0.94) 0%, rgba(1, 68, 130, 0.88) 50%, rgba(24, 116, 199, 0.82) 100%)",
+          background: isEn
+            ? "linear-gradient(135deg, rgba(1, 68, 130, 0.95) 0%, rgba(1, 68, 130, 0.88) 50%, rgba(24, 116, 199, 0.80) 100%)"
+            : "linear-gradient(135deg, rgba(1, 68, 130, 0.94) 0%, rgba(1, 68, 130, 0.88) 50%, rgba(24, 116, 199, 0.82) 100%)",
         }}
       />
 
@@ -64,8 +52,9 @@ export default function GuidesHero({ lang = "ar" }: GuidesHeroProps) {
       />
 
       {/* 3. حاوية المحتوى */}
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 w-full text-right">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 w-full text-start">
         <div className="max-w-3xl">
+          
           {/* البادج العلوي */}
           <motion.div
             initial={{ opacity: 0, y: -12 }}
@@ -75,7 +64,7 @@ export default function GuidesHero({ lang = "ar" }: GuidesHeroProps) {
           >
             <span className="w-2 h-2 rounded-full bg-[#1874C7] ring-4 ring-white/20 animate-pulse" />
             <span className="text-xs sm:text-[13px] font-sans font-medium text-white/95 tracking-wide">
-              قاعدة المعرفة والخبرة العملية
+              {heroContent.badge}
             </span>
           </motion.div>
 
@@ -84,9 +73,13 @@ export default function GuidesHero({ lang = "ar" }: GuidesHeroProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="font-scheherazade text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-bold text-white leading-[1.25] mb-5 drop-shadow-xs"
+            className={`font-bold text-white leading-[1.25] mb-5 drop-shadow-xs ${
+              isEn
+                ? "font-sans text-3xl sm:text-4xl lg:text-[50px]"
+                : "font-scheherazade text-3xl sm:text-4xl md:text-5xl lg:text-[56px]"
+            }`}
           >
-            أدلة ومعرفة مبنية على الخبرة العملية
+            {heroContent.title}
           </motion.h1>
 
           {/* النص التوضيحي */}
@@ -94,9 +87,13 @@ export default function GuidesHero({ lang = "ar" }: GuidesHeroProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-sm sm:text-base md:text-lg text-white/85 font-sans leading-relaxed font-normal mb-10 max-w-2xl drop-shadow-xs"
+            className={`text-white/85 leading-relaxed font-normal mb-9 max-w-2xl drop-shadow-xs ${
+              isEn
+                ? "font-sans text-xs sm:text-sm lg:text-[15px]"
+                : "font-sans text-sm sm:text-base md:text-lg"
+            }`}
           >
-            تجمع هذه المكتبة خلاصة الأدلة الإجرائية والمعارف المهنية المتخصصة، والأطر المرجعية المستمدة من واقع الممارسة الاستشارية والعمل الميداني، بهدف إثراء المعرفة وتعزيز الممارسة ودعم اتخاذ القرار.
+            {heroContent.desc}
           </motion.p>
 
           {/* الشريط السفلي: الكروت الأربعة الزجاجية */}
@@ -106,14 +103,20 @@ export default function GuidesHero({ lang = "ar" }: GuidesHeroProps) {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md shadow-lg shadow-black/5"
           >
-            {heroMetrics.map((item, idx) => (
+            {heroContent.metrics.map((item: any, idx: number) => (
               <div
                 key={item.id}
-                className={`text-right px-2 sm:px-3 py-1.5 ${
-                  idx !== heroMetrics.length - 1 ? "sm:border-l sm:border-white/15" : ""
+                className={`text-start px-2 sm:px-3 py-1.5 ${
+                  idx !== heroContent.metrics.length - 1 ? "sm:border-e sm:border-white/15" : ""
                 }`}
               >
-                <div className="font-scheherazade text-lg sm:text-xl font-bold text-white mb-0.5 leading-snug">
+                <div
+                  className={`font-bold text-white mb-0.5 leading-snug ${
+                    isEn
+                      ? "font-sans text-base sm:text-lg"
+                      : "font-scheherazade text-lg sm:text-xl"
+                  }`}
+                >
                   {item.val}
                 </div>
                 <div className="font-sans text-[11px] sm:text-xs text-white/75 font-normal leading-tight">
@@ -122,6 +125,7 @@ export default function GuidesHero({ lang = "ar" }: GuidesHeroProps) {
               </div>
             ))}
           </motion.div>
+
         </div>
       </div>
     </section>

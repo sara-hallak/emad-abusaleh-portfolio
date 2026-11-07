@@ -2,33 +2,29 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { getTranslations } from "@/data/translations";
 
-// ==========================================
-// 1. أيقونة الكرت 1 (كصورة من جهازك)
-// ضع صورتك داخل مجلد public/images/ واستبدل المسار هنا
-// ==========================================
+// أيقونة الكرت الأول (صورة محلية مع حماية ضد الخطأ)
 export function CardOneImage({ className = "w-12 h-12" }: { className?: string }) {
   return (
     <img
-      src="/images/CardOneImage.png" // ضع مسار صورتك هنا (مثال: /images/icon.png أو .svg)
-      alt="أيقونة الخدمة"
+      src="/images/CardOneImage.png"
+      alt="Service Icon"
       className={`${className} object-contain`}
       onError={(e) => {
-        // أيقونة احتياطية في حال لم تكن الصورة مضافة بعد لتجنب اختفاء المكان
         (e.currentTarget as HTMLImageElement).style.display = "none";
       }}
     />
   );
 }
 
-// ==========================================
-// بقية الأيقونات الخدمية
-// ==========================================
+// باقي الأيقونات الخدمية
 function ServiceIcon({
   type,
   className = "w-6 h-6",
 }: {
-  type: ServiceItem["icon"];
+  type: string;
   className?: string;
 }) {
   switch (type) {
@@ -76,6 +72,7 @@ function ServiceIcon({
       );
 
     case "mentoring":
+    default:
       return (
         <svg
           className={className}
@@ -94,77 +91,29 @@ function ServiceIcon({
   }
 }
 
-// ==========================================
-// بيانات الخدمات
-// ==========================================
-interface ServiceItem {
-  id: string;
-  number: string;
-  title: string;
-  featuredTitle?: string;
-  shortDesc: string;
-  fullDesc: string;
-  icon: "megaphone" | "training" | "guides" | "mentoring";
-}
-
-const SERVICES_DATA: ServiceItem[] = [
-  {
-    id: "advocacy",
-    number: "01",
-    title: "التخطيط وقيادة حملات كسب التأييد / المناصرة",
-    featuredTitle: "التخطيط وقيادة حملات\nكسب التأييد / المناصرة",
-    shortDesc: "تصميم الخطط وبناء الرسائل والتحالفات",
-    fullDesc:
-      "تصميم الخطط، بناء الرسائل الموجهة، وتوجيه مسارات العمل الميدانية والتحالفية لتحقيق أهداف المناصرة وكسب التأييد.",
-    icon: "megaphone",
-  },
-  {
-    id: "training",
-    number: "02",
-    title: "التدريب وبناء القدرات",
-    shortDesc: "برامج تطبيقية مخصصة للفرق والمنظمات",
-    fullDesc:
-      "تصميم وتنفيذ برامج تدريبية تطبيقية مخصصة لتطوير مهارات الفرق وتمكين المنظمات من تحقيق أثر مستدام وملموس.",
-    icon: "training",
-  },
-  {
-    id: "guides",
-    number: "03",
-    title: "إعداد الأدلة والمناهج",
-    shortDesc: "تطوير أدلة إجرائية ومواد معرفية محكمة",
-    fullDesc:
-      "تطوير أدلة إجرائية وتدريبية ومواد معرفية محكمة تجمع بين المنهجية العلمية وسهولة التطبيق العملي في الميدان.",
-    icon: "guides",
-  },
-  {
-    id: "mentoring",
-    number: "04",
-    title: "الإرشاد المهني والاستشاري",
-    shortDesc: "مرافقة توجيهية لقيادات العمل الأهلي والمدني",
-    fullDesc:
-      "تقديم جلسات إرشاد مهني ومرافقة استشارية وتوجيهية لقيادات وكوادر العمل الأهلي والمدني لتعزيز الفعالية المؤسسية.",
-    icon: "mentoring",
-  },
-];
-
 interface ServicesProps {
   onSelectService?: (serviceId: string) => void;
 }
 
-// ==========================================
-// المكون الرئيسي للخدمات
-// ==========================================
 export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
+  const pathname = usePathname();
+  const currentLang = pathname?.startsWith("/en") ? "en" : "ar";
+  const isEn = currentLang === "en";
+
+  const t = getTranslations(currentLang);
+  const servicesList = t.services.items;
+
   const [activeId, setActiveId] = useState<string>("advocacy");
 
   const activeService =
-    SERVICES_DATA.find((s) => s.id === activeId) || SERVICES_DATA[0];
-  const sideServices = SERVICES_DATA.filter((s) => s.id !== activeId);
+    servicesList.find((s) => s.id === activeId) || servicesList[0];
+  const sideServices = servicesList.filter((s) => s.id !== activeId);
 
   return (
     <section
       id="services"
       className="w-full bg-white py-10 sm:py-14 lg:py-16 overflow-hidden"
+      dir={isEn ? "ltr" : "rtl"}
     >
       <div className="max-w-[1260px] w-full mx-auto px-4 sm:px-6 lg:px-12">
         
@@ -176,20 +125,32 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="text-start mb-6 sm:mb-8"
         >
-          <h2 className="font-scheherazade text-3xl sm:text-4xl lg:text-[40px] font-bold text-dark-blue leading-tight mb-1">
-            خبرة تتحول إلى عمل قابل للتنفيذ
+          <h2
+            className={`font-bold text-[#014482] leading-tight mb-1 ${
+              isEn
+                ? "font-sans text-2xl sm:text-3xl lg:text-[34px]"
+                : "font-scheherazade text-3xl sm:text-4xl lg:text-[40px]"
+            }`}
+          >
+            {t.services.sectionTitle}
           </h2>
-          <p className="font-scheherazade text-xs sm:text-sm lg:text-[16px] text-primary-blue/80 font-normal">
-            تكامل بين التخطيط الاستراتيجي، بناء القدرات، إعداد الأدلة التخصصية، والإرشاد المؤسسي.
+          <p
+            className={`font-normal text-[#1874C7]/80 ${
+              isEn
+                ? "font-sans text-xs sm:text-sm lg:text-[15px]"
+                : "font-scheherazade text-xs sm:text-sm lg:text-[16px]"
+            }`}
+          >
+            {t.services.sectionDesc}
           </p>
         </motion.div>
 
         {/* شبكة المحتوى: البطاقة الزرقاء + القائمة الجانبية */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-stretch">
           
-          {/* العمود الأيمن: البطاقة الزرقاء الرئيسية */}
+          {/* البطاقة الزرقاء الرئيسية */}
           <motion.div
-            initial={{ opacity: 0, x: 25 }}
+            initial={{ opacity: 0, x: isEn ? -25 : 25 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ duration: 0.65, ease: [0.21, 0.47, 0.32, 0.98] }}
@@ -198,21 +159,21 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
             <motion.div
               whileHover={{ y: -3 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="group/card relative w-full rounded-[20px] bg-gradient-to-b from-[#1874C7] via-[#0E5CA5] to-[#014482] text-white p-6 sm:p-7 lg:p-8 shadow-md hover:shadow-xl hover:shadow-primary-blue/20 transition-all duration-300 flex flex-col justify-between overflow-hidden min-h-[270px] sm:min-h-[300px]"
+              className="group/card relative w-full rounded-[20px] bg-gradient-to-b from-[#1874C7] via-[#0E5CA5] to-[#014482] text-white p-6 sm:p-7 lg:p-8 shadow-md hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 flex flex-col justify-between overflow-hidden min-h-[270px] sm:min-h-[300px]"
             >
-              {/* هالة ضوئية خفيفة جداً داخل البطاقة */}
+              {/* هالة ضوئية خفيفة */}
               <div className="absolute -top-16 -left-16 w-52 h-52 bg-white/5 group-hover/card:bg-white/10 rounded-full blur-2xl transition-colors duration-500 pointer-events-none" />
 
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={activeService.id}
+                  key={activeService.id + currentLang}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
                   className="flex flex-col h-full justify-between z-10"
                 >
-                  {/* الصف العلوي: الرقم والأيقونة (صورة للكرت الأول أو SVG للبقية) */}
+                  {/* الصف العلوي: الرقم والأيقونة */}
                   <div className="flex items-start justify-between gap-4 mb-4 sm:mb-5">
                     <span className="font-sans text-3xl sm:text-4xl lg:text-[46px] font-extrabold tracking-tight leading-none text-white select-none">
                       {activeService.number}
@@ -228,26 +189,42 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
 
                   {/* عنوان الخدمة ووصفها */}
                   <div className="my-auto text-start">
-                    <h3 className="font-scheherazade text-xl sm:text-2xl lg:text-[27px] font-bold text-white leading-snug mb-2 whitespace-pre-line">
-                      {activeService.featuredTitle || activeService.title}
+                    <h3
+                      className={`font-bold text-white leading-snug mb-2 ${
+                        isEn
+                          ? "font-sans text-lg sm:text-xl lg:text-[23px]"
+                          : "font-scheherazade text-xl sm:text-2xl lg:text-[27px] whitespace-pre-line"
+                      }`}
+                    >
+                      {activeService.title}
                     </h3>
-                    <p className="font-scheherazade text-xs sm:text-sm lg:text-[15px] text-white/85 leading-relaxed max-w-[500px] font-normal">
+                    <p
+                      className={`text-white/85 leading-relaxed font-normal max-w-[500px] ${
+                        isEn
+                          ? "font-sans text-xs sm:text-sm lg:text-[14px]"
+                          : "font-scheherazade text-xs sm:text-sm lg:text-[15px]"
+                      }`}
+                    >
                       {activeService.fullDesc}
                     </p>
                   </div>
 
-                  {/* رابط الاستكشاف */}
+                  {/* رابط الاستكشاف مع سهم متكيف */}
                   <div className="mt-5 flex justify-end">
                     <button
                       onClick={() => onSelectService?.(activeService.id)}
                       className="group/btn inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-white/90 hover:text-white py-1 px-2.5 rounded-lg hover:bg-white/10 transition-all cursor-pointer"
                     >
-                      <span className="relative">
-                        استكشف تفاصيل الخدمة
-                        <span className="absolute -bottom-0.5 inset-x-0 h-[1.5px] bg-white scale-x-0 group-hover/btn:scale-x-100 transition-transform duration-200 origin-right" />
+                      <span className="relative font-sans">
+                        {t.services.exploreBtn}
+                        <span
+                          className={`absolute -bottom-0.5 inset-x-0 h-[1.5px] bg-white scale-x-0 group-hover/btn:scale-x-100 transition-transform duration-200 ${
+                            isEn ? "origin-left" : "origin-right"
+                          }`}
+                        />
                       </span>
-                      <span className="text-sm transition-transform duration-200 group-hover/btn:-translate-x-1">
-                        ←
+                      <span className="text-sm transition-transform duration-200 group-hover/btn:translate-x-1">
+                        {isEn ? "→" : "←"}
                       </span>
                     </button>
                   </div>
@@ -256,16 +233,19 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
             </motion.div>
           </motion.div>
 
-          {/* العمود الأيسر: الخط العمودي الفاصل + قائمة الخدمات الجانبية */}
+          {/* القائمة الجانبية للخدمات */}
           <div className="lg:col-span-5 flex items-stretch">
-            {/* الخط الفاصل الرأسي الهادئ */}
-            <div className="hidden lg:block w-[2px] bg-gray-100 rounded-full my-2 me-4 xl:me-6 shrink-0" />
+            {/* الخط الفاصل الرأسي */}
+            <div
+              className={`hidden lg:block w-[2px] bg-gray-100 rounded-full my-2 shrink-0 ${
+                isEn ? "ms-4 xl:ms-6 me-1" : "me-4 xl:me-6 ms-1"
+              }`}
+            />
 
-            {/* قائمة الخدمات الثلاث بهوفر مخملي هادئ وبدون خطوط بارزة */}
             <div className="w-full flex flex-col justify-between divide-y divide-gray-100/80">
               {sideServices.map((service, index) => (
                 <motion.button
-                  key={service.id}
+                  key={service.id + currentLang}
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -277,13 +257,12 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
                   onClick={() => setActiveId(service.id)}
                   className="group w-full py-3.5 sm:py-4 px-3.5 flex items-center justify-between gap-3 text-start transition-colors duration-200 hover:bg-[#F8FAFC] rounded-xl cursor-pointer"
                 >
-                  {/* تفاصيل الخدمة */}
                   <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                    <span className="font-sans text-lg sm:text-xl font-bold text-primary-blue group-hover:text-dark-blue transition-colors leading-none shrink-0 w-7 sm:w-8">
+                    <span className="font-sans text-lg sm:text-xl font-bold text-[#1874C7] group-hover:text-[#014482] transition-colors leading-none shrink-0 w-7 sm:w-8">
                       {service.number}
                     </span>
 
-                    <div className="text-dark-blue/80 group-hover:text-primary-blue transition-colors shrink-0">
+                    <div className="text-[#014482]/80 group-hover:text-[#1874C7] transition-colors shrink-0">
                       <ServiceIcon
                         type={service.icon}
                         className="w-5 h-5 sm:w-6 sm:h-6"
@@ -291,17 +270,29 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
                     </div>
 
                     <div className="min-w-0 pe-1">
-                      <h4 className="font-scheherazade text-base sm:text-[18px] font-bold text-dark-blue group-hover:text-primary-blue transition-colors leading-snug truncate">
+                      <h4
+                        className={`font-bold text-[#014482] group-hover:text-[#1874C7] transition-colors leading-snug truncate ${
+                          isEn
+                            ? "font-sans text-xs sm:text-[14px]"
+                            : "font-scheherazade text-base sm:text-[18px]"
+                        }`}
+                      >
                         {service.title}
                       </h4>
-                      <p className="font-scheherazade text-xs sm:text-[12px] text-gray-500 leading-normal truncate">
+                      <p
+                        className={`text-gray-500 leading-normal truncate ${
+                          isEn
+                            ? "font-sans text-[11px] sm:text-xs"
+                            : "font-scheherazade text-xs sm:text-[12px]"
+                        }`}
+                      >
                         {service.shortDesc}
                       </p>
                     </div>
                   </div>
 
-                  <span className="text-gray-300 group-hover:text-primary-blue text-xs sm:text-sm transition-transform duration-200 group-hover:-translate-x-1 shrink-0">
-                    ←
+                  <span className="text-gray-300 group-hover:text-[#1874C7] text-xs sm:text-sm transition-transform duration-200 group-hover:translate-x-1 shrink-0">
+                    {isEn ? "→" : "←"}
                   </span>
                 </motion.button>
               ))}

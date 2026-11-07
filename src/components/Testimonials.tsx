@@ -3,13 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-
-// ==========================================
-// 1. قسم الأيقونات
-// ==========================================
+import { usePathname } from "next/navigation";
+import { getTranslations } from "@/data/translations";
 
 export function QuoteIcon({
-  className = "w-5 h-5 text-primary-blue",
+  className = "w-5 h-5 text-[#1874C7]",
 }: {
   className?: string;
 }) {
@@ -32,65 +30,15 @@ export function UserAvatarIcon({
   );
 }
 
-// ==========================================
-// 2. بيانات الآراء
-// ==========================================
-export interface Testimonial {
-  id: string;
-  name: string;
-  role: string;
-  quote: string;
-}
-
-const testimonials: Testimonial[] = [
-  {
-    id: "1",
-    name: "أحمد محمد",
-    role: "رائد أعمال ومستشار",
-    quote:
-      "تجربة قيّمة أسهمت في بناء مهارات نوعية ودعم مسارات العمل المجتمعي والمناصرة برؤية استراتيجية واضحة، وكل التقدير للمجهود الملهم والمثمر.",
-  },
-  {
-    id: "2",
-    name: "د. طارق محمود",
-    role: "مدير منظمة مجتمعية",
-    quote:
-      "تميّز في بناء الخطط ومرافقة التدخلات الاستراتيجية، تجربة ملهمة أحدثت أثراً حقيقياً في تطوير قدرات الفريق المؤسسي ورفع جودة الأداء الميداني.",
-  },
-  {
-    id: "3",
-    name: "سارة عبد العزيز",
-    role: "باحثة ومسؤولة مناصرة",
-    quote:
-      "شراكة نوعية واستشارات دقيقة مكّنتنا من تحقيق أهداف الحملات بفاعلية وكفاءة عالية، كل الشكر والتقدير لهذا الأثر المستدام والرؤية المتكاملة.",
-  },
-  {
-    id: "4",
-    name: "م. خالد العتيبي",
-    role: "منسق برامج وتمكين قيادات",
-    quote:
-      "منهجية تدريب استثنائية نقلت المفاهيم النظرية إلى أدوات عمل تنفيذية ملموسة، انعكست فوراً على إنتاجية فرق العمل وكفاءة المبادرات الميدانية.",
-  },
-  {
-    id: "5",
-    name: "د. ريم الدوسري",
-    role: "مستشارة بناء قدرات مؤسسية",
-    quote:
-      "إعداد الأدلة والمناهج التخصصية اتسم بالدقة العالية وسهولة التطبيق العملي، مما وفّر وقتاً طويلاً في تأهيل وتدريب الكوادر الجديدة.",
-  },
-  {
-    id: "6",
-    name: "يوسف الشامي",
-    role: "مدير تحالف مجتمع مدني",
-    quote:
-      "المرافقة الاستشارية والإرشاد المهني للقيادات شكّل علامة فارقة في توجيه بوصلة التحالف وتوسيع نطاق أثره المجتمعي بنجاح واقتدار.",
-  },
-];
-
-// ==========================================
-// 3. المكون الرئيسي
-// ==========================================
 export const Testimonials: React.FC = () => {
+  const pathname = usePathname();
+  const currentLang = pathname?.startsWith("/en") ? "en" : "ar";
+  const isEn = currentLang === "en";
+
+  const t = getTranslations(currentLang);
+  const items = t.testimonials.items;
+  const total = items.length;
+
   const [activeIndex, setActiveIndex] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -101,8 +49,6 @@ export const Testimonials: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const total = testimonials.length;
-
   const handleNext = () => {
     setActiveIndex((prev) => (prev + 1) % total);
   };
@@ -111,24 +57,34 @@ export const Testimonials: React.FC = () => {
     setActiveIndex((prev) => (prev - 1 + total) % total);
   };
 
-  const trackOffset = isMobile
+  // إزاحة السلايدر بحسب اللغة (في الإنجليزية إزاحة سالبة LTR، وفي العربية موجبة RTL)
+  const baseOffset = isMobile
     ? activeIndex * 100
     : (activeIndex - 1) * (100 / 3);
+
+  const trackOffset = isEn ? -baseOffset : baseOffset;
 
   return (
     <section
       id="testimonials"
       className="w-full bg-white py-14 sm:py-20 lg:py-24 overflow-hidden"
+      dir={isEn ? "ltr" : "rtl"}
     >
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-12">
         {/* الترويسة العلوية */}
         <div className="flex items-center justify-between mb-10 sm:mb-14">
-          <h2 className="font-scheherazade text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark-blue leading-tight text-start">
-            آراء من قلب التجربة
+          <h2
+            className={`font-bold text-[#014482] leading-tight text-start ${
+              isEn
+                ? "font-sans text-2xl sm:text-3xl lg:text-[38px]"
+                : "font-scheherazade text-3xl sm:text-4xl lg:text-[44px]"
+            }`}
+          >
+            {t.testimonials.title}
           </h2>
 
-          <div className="text-primary-blue select-none">
-            <QuoteIcon className="w-12 h-12 sm:w-16 sm:h-16 text-primary-blue opacity-95" />
+          <div className="text-[#1874C7] select-none">
+            <QuoteIcon className="w-10 h-10 sm:w-14 sm:h-14 text-[#1874C7] opacity-90" />
           </div>
         </div>
 
@@ -144,12 +100,12 @@ export const Testimonials: React.FC = () => {
             }}
             className="flex items-stretch"
           >
-            {testimonials.map((item, index) => {
+            {items.map((item, index) => {
               const isActive = index === activeIndex;
 
               return (
                 <div
-                  key={item.id}
+                  key={item.id + currentLang}
                   className="w-full md:w-1/3 shrink-0 px-2.5 sm:px-3.5"
                 >
                   <motion.article
@@ -163,16 +119,16 @@ export const Testimonials: React.FC = () => {
                       duration: 0.55,
                       ease: [0.16, 1, 0.3, 1],
                     }}
-                    className={`relative h-full rounded-[22px] border border-gray-100 flex flex-col justify-between overflow-hidden cursor-pointer select-none transition-shadow duration-300 ${
+                    className={`relative h-full rounded-[22px] border border-slate-200/90 flex flex-col justify-between overflow-hidden cursor-pointer select-none transition-shadow duration-300 ${
                       isActive
                         ? "shadow-2xl shadow-blue-900/10 z-20"
                         : "shadow-sm hover:shadow-md z-10"
                     }`}
                   >
-                    {/* أنيميشن رسم البوردر: يكتمل على كامل الكرت، يثبت قليلاً، ثم يختفي بنعومة */}
+                    {/* أنيميشن رسم البوردر الأزرق عند التفعيل */}
                     {isActive && (
                       <svg
-                        key={`border-${item.id}-${activeIndex}`}
+                        key={`border-${item.id}-${activeIndex}-${currentLang}`}
                         className="absolute inset-[1px] w-[calc(100%-2px)] h-[calc(100%-2px)] pointer-events-none z-30 overflow-visible"
                       >
                         <motion.rect
@@ -203,26 +159,44 @@ export const Testimonials: React.FC = () => {
                     )}
 
                     {/* القسم العلوي الأبيض */}
-                    <div className="bg-white p-6 sm:p-8 flex flex-col flex-1 justify-between">
+                    <div className="bg-white p-6 sm:p-8 flex flex-col flex-1 justify-between text-start">
                       <div className="flex mb-3">
-                        <QuoteIcon className="w-5 h-5 text-primary-blue" />
+                        <QuoteIcon className="w-5 h-5 text-[#1874C7]" />
                       </div>
 
-                      <p className="font-scheherazade text-dark-blue text-[15px] sm:text-[17px] leading-[1.85]  font-medium my-auto px-1 sm:px-2">
+                      <p
+                        className={`text-[#014482] leading-[1.8] font-medium my-auto px-1 sm:px-2 ${
+                          isEn
+                            ? "font-sans text-xs sm:text-[14px]"
+                            : "font-scheherazade text-[15px] sm:text-[17px]"
+                        }`}
+                      >
                         {item.quote}
                       </p>
                     </div>
 
-                    {/* القسم السفلي الرمادي */}
-                    <footer className="bg-[#F5F7FA] px-6 py-4 border-t border-gray-100/70 flex items-center  gap-3.5">
+                    {/* القسم السفلي */}
+                    <footer className="bg-[#F5F7FA] px-6 py-4 border-t border-slate-100 flex items-center gap-3.5 text-start">
                       <div className="w-10 h-10 rounded-full bg-slate-200/80 border-2 border-white shadow-2xs flex items-center justify-center shrink-0 overflow-hidden">
                         <UserAvatarIcon className="w-5 h-5 text-slate-400" />
                       </div>
-                      <div className="flex flex-col ">
-                        <span className="font-scheherazade font-bold text-dark-blue text-sm sm:text-base leading-snug">
+                      <div className="flex flex-col min-w-0">
+                        <span
+                          className={`font-bold text-[#014482] leading-snug truncate ${
+                            isEn
+                              ? "font-sans text-xs sm:text-sm"
+                              : "font-scheherazade text-sm sm:text-base"
+                          }`}
+                        >
                           {item.name}
                         </span>
-                        <span className="font-scheherazade text-[11px] sm:text-xs text-gray-400">
+                        <span
+                          className={`text-slate-400 truncate ${
+                            isEn
+                              ? "font-sans text-[10px] sm:text-[11px]"
+                              : "font-scheherazade text-[11px] sm:text-xs"
+                          }`}
+                        >
                           {item.role}
                         </span>
                       </div>
@@ -234,40 +208,40 @@ export const Testimonials: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* شريط التنقل السفلي */}
+        {/* شريط التنقل السفلي المتكيف مع الاتجاهين */}
         <nav
-          aria-label="تنقل الآراء"
+          aria-label="Testimonials Navigation"
           className="flex items-center justify-center gap-3 mt-6 sm:mt-10"
         >
           <button
-            onClick={handlePrev}
-            aria-label="السابق"
-            className="text-primary-blue/60 hover:text-primary-blue transition-colors p-1 cursor-pointer"
+            onClick={isEn ? handlePrev : handlePrev}
+            aria-label="Previous"
+            className="text-[#1874C7]/60 hover:text-[#1874C7] transition-colors p-1 cursor-pointer"
           >
-            <ChevronRight className="w-4 h-4" />
+            {isEn ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
           </button>
 
           <div className="flex items-center gap-1.5 px-2">
-            {testimonials.map((_, i) => (
+            {items.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setActiveIndex(i)}
                 className={`rounded-full transition-all duration-300 cursor-pointer ${
                   i === activeIndex
-                    ? "w-2.5 h-2.5 bg-primary-blue shadow-xs"
+                    ? "w-2.5 h-2.5 bg-[#1874C7] shadow-xs"
                     : "w-1.5 h-1.5 bg-slate-300 hover:bg-slate-400"
                 }`}
-                aria-label={`الانتقال إلى الرأي ${i + 1}`}
+                aria-label={`Slide ${i + 1}`}
               />
             ))}
           </div>
 
           <button
-            onClick={handleNext}
-            aria-label="التالي"
-            className="text-primary-blue/60 hover:text-primary-blue transition-colors p-1 cursor-pointer"
+            onClick={isEn ? handleNext : handleNext}
+            aria-label="Next"
+            className="text-[#1874C7]/60 hover:text-[#1874C7] transition-colors p-1 cursor-pointer"
           >
-            <ChevronLeft className="w-4 h-4" />
+            {isEn ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
           </button>
         </nav>
       </div>

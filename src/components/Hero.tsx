@@ -5,6 +5,7 @@ import { Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getTranslations } from "@/data/translations";
 
 interface HeroProps {
   onNavigateToContact?: () => void;
@@ -17,14 +18,22 @@ export const Hero: React.FC<HeroProps> = ({
 }) => {
   const pathname = usePathname();
   const currentLang = pathname?.startsWith("/en") ? "en" : "ar";
+  const isEn = currentLang === "en";
 
-  // تأثير الكتابة والحذف التلقائي لعبارة "نستحق وأكثر.."
-  const fullText = "نستحق وأكثر..";
+  const t = getTranslations(currentLang);
+
+  // تأثير الكتابة والحذف التلقائي
+  const fullText = t.hero.slogan;
   const [displayedText, setDisplayedText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const typingSpeed = isDeleting ? 75 : 130;
+    setDisplayedText("");
+    setIsDeleting(false);
+  }, [currentLang]);
+
+  useEffect(() => {
+    const typingSpeed = isDeleting ? 70 : 120;
     const pauseAfterTyping = 2200;
     const pauseAfterDeleting = 500;
 
@@ -41,7 +50,7 @@ export const Hero: React.FC<HeroProps> = ({
     }, typingSpeed);
 
     return () => clearTimeout(timer);
-  }, [displayedText, isDeleting]);
+  }, [displayedText, isDeleting, fullText]);
 
   const handleScrollTo = (id: string, callback?: () => void) => {
     if (callback) {
@@ -56,44 +65,56 @@ export const Hero: React.FC<HeroProps> = ({
     <section
       id="hero"
       className="relative w-full bg-gradient-to-b from-[#FBFDFF] via-white to-white flex flex-col justify-center overflow-hidden border-b border-gray-100"
-      dir="rtl"
+      dir={isEn ? "ltr" : "rtl"}
     >
-      {/* الحاوية الرئيسية */}
-      <div className="max-w-[1560px] w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 lg:py-0 lg:min-h-[580px] lg:max-h-[680px] flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-center relative">
+      {/* تقليص عرض الحاوية من 1560px إلى 1280px لإلغاء التباعد الزائد وتقريب العناصر */}
+      <div className="max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 lg:py-0 lg:min-h-[560px] lg:max-h-[640px] flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-center relative">
         
-        {/* 1. الصورة الشخصية: في الأعلى على الموبايل ويميناً على الكمبيوتر */}
+        {/* 1. الصورة الشخصية */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="w-full lg:col-span-5 h-[300px] sm:h-[380px] lg:h-[580px] flex items-end justify-center relative self-end"
+          className={`w-full lg:col-span-5 h-[300px] sm:h-[380px] lg:h-[560px] flex items-end justify-center relative self-end ${
+            isEn ? "lg:order-2" : "lg:order-1"
+          }`}
         >
           <div className="relative w-full h-full flex items-end justify-center overflow-visible">
-            {/* التدرج اللوني المتركز خلف الصورة */}
-            <div className="absolute bottom-0 w-[240px] h-[240px] sm:w-[320px] sm:h-[320px] lg:w-[460px] lg:h-[460px] bg-[radial-gradient(circle,rgba(24,116,199,0.15)_0%,rgba(240,247,255,0.45)_50%,transparent_75%)] rounded-full blur-2xl -z-10 pointer-events-none" />
+            {/* التدرج اللوني خلف الصورة */}
+            <div className="absolute bottom-0 w-[240px] h-[240px] sm:w-[320px] sm:h-[320px] lg:w-[420px] lg:h-[420px] bg-[radial-gradient(circle,rgba(24,116,199,0.15)_0%,rgba(240,247,255,0.45)_50%,transparent_75%)] rounded-full blur-2xl -z-10 pointer-events-none" />
 
             <motion.img
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
               src="/images/emad-portrait.png"
-              alt="عماد أبو صالح الفناطسة"
+              alt={t.hero.name}
               className="h-full w-auto max-w-full object-contain object-bottom select-none drop-shadow-md"
               loading="eager"
             />
           </div>
         </motion.div>
 
-        {/* 2. النصوص والأزرار: تحت الصورة على الموبايل ويساراً على الكمبيوتر */}
-        <div className="w-full lg:col-span-7 flex flex-col items-center lg:items-start justify-center text-center lg:text-start pt-2 pb-2 lg:py-10 z-10 lg:pe-6">
+        {/* 2. النصوص والأزرار (مع مسافة أمان كافية للشريط الجانبي) */}
+        <div
+          className={`w-full lg:col-span-7 flex flex-col items-center lg:items-start justify-center text-center lg:text-start pt-2 pb-2 lg:py-8 z-10 ${
+            isEn 
+              ? "lg:order-1 ps-8 sm:ps-14 lg:ps-16 pe-2" 
+              : "lg:order-2 lg:pe-6"
+          }`}
+        >
           
           {/* الاسم الرئيسي */}
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-scheherazade text-3xl sm:text-5xl lg:text-[54px] xl:text-[60px] font-bold text-dark-blue leading-[1.2] tracking-tight whitespace-nowrap mb-1.5 sm:mb-2"
+            className={`font-bold text-[#014482] leading-[1.2] tracking-tight mb-2 ${
+              isEn
+                ? "font-sans text-2xl sm:text-4xl lg:text-[40px] xl:text-[44px]"
+                : "font-scheherazade text-3xl sm:text-5xl lg:text-[54px] xl:text-[60px] whitespace-nowrap"
+            }`}
           >
-            عماد أبو صالح الفناطسة
+            {t.hero.name}
           </motion.h1>
 
           {/* الشعار اللفظي مع أنيميشن الكتابة والحذف */}
@@ -101,16 +122,22 @@ export const Hero: React.FC<HeroProps> = ({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative inline-flex flex-col items-center lg:items-start mb-3 sm:mb-5 min-h-[40px] sm:min-h-[56px]"
+            className="relative inline-flex flex-col items-center lg:items-start mb-3 sm:mb-4 min-h-[38px] sm:min-h-[50px]"
           >
-            <div className="font-scheherazade text-2xl sm:text-4xl lg:text-[42px] xl:text-[46px] font-bold text-primary-blue leading-tight flex items-center whitespace-nowrap">
+            <div
+              className={`font-bold text-[#1874C7] leading-tight flex items-center whitespace-nowrap ${
+                isEn
+                  ? "font-sans text-xl sm:text-2xl lg:text-[30px]"
+                  : "font-scheherazade text-2xl sm:text-4xl lg:text-[42px] xl:text-[46px]"
+              }`}
+            >
               <span>{displayedText}</span>
-              <span className="inline-block w-[2.5px] h-6 sm:h-9 lg:h-10 bg-primary-blue ms-1.5 animate-pulse rounded-full" />
+              <span className="inline-block w-[2.5px] h-5 sm:h-8 bg-[#1874C7] ms-1.5 animate-pulse rounded-full" />
             </div>
 
-            {/* خط التمييز الناعم أسفل العبارة */}
+            {/* خط التمييز الناعم */}
             <svg
-              className="w-40 sm:w-56 lg:w-64 h-2.5 text-primary-blue/25 mt-0.5"
+              className="w-36 sm:w-52 h-2 text-[#1874C7]/25 mt-0.5"
               viewBox="0 0 300 12"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -129,9 +156,13 @@ export const Hero: React.FC<HeroProps> = ({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="font-scheherazade text-sm sm:text-lg lg:text-[21px] xl:text-[23px] text-gray-800 leading-relaxed font-normal whitespace-nowrap mb-6 sm:mb-7"
+            className={`text-gray-700 leading-relaxed font-normal mb-6 max-w-lg ${
+              isEn
+                ? "font-sans text-xs sm:text-sm lg:text-[15px]"
+                : "font-scheherazade text-sm sm:text-lg lg:text-[21px] xl:text-[23px]"
+            }`}
           >
-            خبرة في كسب التأييد/المناصرة، التدريب، إعداد الأدلة والإرشاد المهني.
+            {t.hero.bio}
           </motion.p>
 
           {/* أزرار التفاعل (CTAs) */}
@@ -139,31 +170,31 @@ export const Hero: React.FC<HeroProps> = ({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-row items-center justify-center lg:justify-start gap-3 sm:gap-5 whitespace-nowrap"
+            className="flex flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 flex-wrap"
           >
-            {/* زر "تواصل مع عماد" */}
+            {/* زر تواصل معنا */}
             <motion.button
-              whileHover={{ scale: 1.04, y: -2 }}
+              whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => handleScrollTo("contact", onNavigateToContact)}
-              className="group inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-primary-blue hover:bg-dark-blue text-white font-semibold text-xs sm:text-base shadow-md shadow-primary-blue/20 hover:shadow-lg hover:shadow-primary-blue/30 transition-all duration-300 cursor-pointer"
+              className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#1874C7] hover:bg-[#014482] text-white font-semibold text-xs sm:text-sm shadow-md shadow-blue-500/20 hover:shadow-lg transition-all duration-300 cursor-pointer"
             >
-              <span>تواصل مع عماد</span>
+              <span>{t.hero.contactBtn}</span>
               <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300 group-hover:scale-110" />
             </motion.button>
 
-            {/* رابط "استكشف الخبرات والمشاريع" */}
-            <motion.div whileHover={{ x: -4 }} className="inline-block">
+            {/* رابط استكشف الخبرات والمشاريع */}
+            <motion.div whileHover={{ x: isEn ? 3 : -3 }} className="inline-block">
               <Link
                 href={`/${currentLang}/projects`}
-                className="group inline-flex items-center gap-1.5 text-xs sm:text-base lg:text-lg font-semibold text-primary-blue hover:text-dark-blue transition-colors py-1.5 cursor-pointer"
+                className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#1874C7] hover:text-[#014482] transition-colors py-1.5 cursor-pointer"
               >
                 <span className="relative">
-                  استكشف الخبرات والمشاريع
-                  <span className="absolute -bottom-1 inset-x-0 h-[1.5px] bg-dark-blue scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-right" />
+                  {t.hero.projectsBtn}
+                  <span className={`absolute -bottom-1 inset-x-0 h-[1.5px] bg-[#014482] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ${isEn ? "origin-left" : "origin-right"}`} />
                 </span>
-                <span className="text-base sm:text-lg transition-transform duration-300 group-hover:-translate-x-1.5">
-                  ←
+                <span className="text-sm sm:text-base transition-transform duration-300 group-hover:translate-x-1">
+                  {isEn ? "→" : "←"}
                 </span>
               </Link>
             </motion.div>
@@ -171,15 +202,15 @@ export const Hero: React.FC<HeroProps> = ({
         </div>
       </div>
 
-      {/* الشريط الجانبي: محصور داخل الهيرو فقط (absolute) ولا ينزل مع الصفحة */}
+      {/* الشريط الجانبي: محصور في أقصى اليسار دون أن يتداخل مع النصوص */}
       <motion.aside
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7, delay: 0.5, ease: "easeOut" }}
-        aria-label="حسابات التواصل الاجتماعي"
-        className="absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center"
+        aria-label="Social Media"
+        className="absolute left-1.5 sm:left-3 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center"
       >
-        <div className="flex flex-col items-center gap-2 sm:gap-2.5 py-2.5 sm:py-3.5 px-1.5 sm:px-2 rounded-full bg-gradient-to-b from-primary-blue to-dark-blue shadow-lg shadow-blue-950/20 border border-white/20 backdrop-blur-md">
+        <div className="flex flex-col items-center gap-2 sm:gap-2.5 py-2.5 sm:py-3.5 px-1.5 sm:px-2 rounded-full bg-gradient-to-b from-[#1874C7] to-[#014482] shadow-lg shadow-blue-950/20 border border-white/20 backdrop-blur-md">
           <span className="w-1.5 h-1.5 rounded-full bg-white/70 mb-0.5" />
 
           {/* LinkedIn */}
@@ -236,7 +267,7 @@ function SocialIconLink({
       rel="noopener noreferrer"
       aria-label={label}
       title={label}
-      className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/15 hover:bg-white text-white hover:text-primary-blue flex items-center justify-center transition-colors duration-200 shadow-xs"
+      className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/15 hover:bg-white text-white hover:text-[#1874C7] flex items-center justify-center transition-colors duration-200 shadow-xs"
     >
       {children}
     </motion.a>

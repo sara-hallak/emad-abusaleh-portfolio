@@ -2,8 +2,12 @@
 
 import React from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { motion, type Variants } from "framer-motion";
+
+interface PartnersPageContentProps {
+  lang?: string;
+}
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -28,16 +32,21 @@ const cardVariants: Variants = {
   },
 };
 
-export const PartnersPageContent: React.FC = () => {
+export const PartnersPageContent: React.FC<PartnersPageContentProps> = ({
+  lang: propLang,
+}) => {
   const params = useParams();
-  const lang = (params?.lang as string) || "ar";
+  const pathname = usePathname();
+  const currentLang =
+    propLang || (params?.lang as string) || (pathname?.startsWith("/en") ? "en" : "ar");
+  const isEn = currentLang === "en";
 
-  // قائمة الهيئات الحكومية (القسم الأول: المنظمات الدولية / القطاع العام)
+  // قائمة الهيئات الحكومية (القسم الأول: القطاع العام)
   const governmentPartners = [
     {
       id: "gov-1",
-      name: "وزارة التخطيط والتعاون",
-      sub: "المملكة الأردنية الهاشمية",
+      name: isEn ? "Ministry of Planning & Int. Cooperation" : "وزارة التخطيط والتعاون",
+      sub: isEn ? "Hashemite Kingdom of Jordan" : "المملكة الأردنية الهاشمية",
       logo: (
         <div className="flex flex-col items-center justify-center">
           <div className="w-8 h-8 rounded-full border-2 border-[#014482] flex items-center justify-center p-1 bg-slate-50">
@@ -51,8 +60,8 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "gov-2",
-      name: "وزارة التنمية الاجتماعية",
-      sub: "المملكة الأردنية الهاشمية",
+      name: isEn ? "Ministry of Social Development" : "وزارة التنمية الاجتماعية",
+      sub: isEn ? "Hashemite Kingdom of Jordan" : "المملكة الأردنية الهاشمية",
       logo: (
         <div className="flex items-center justify-center w-9 h-9 rounded-full bg-blue-50 text-[#1874C7]">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -63,8 +72,8 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "gov-3",
-      name: "المجلس الأعلى للشباب",
-      sub: "المملكة الأردنية الهاشمية",
+      name: isEn ? "Higher Council for Youth" : "المجلس الأعلى للشباب",
+      sub: isEn ? "Hashemite Kingdom of Jordan" : "المملكة الأردنية الهاشمية",
       logo: (
         <div className="flex flex-col items-center">
           <div className="w-8 h-8 rounded-full bg-[#1874C7] text-white flex items-center justify-center shadow-2xs">
@@ -78,8 +87,8 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "gov-4",
-      name: "مؤسسة التدريب المهني",
-      sub: "المملكة الأردنية الهاشمية",
+      name: isEn ? "Vocational Training Corporation" : "مؤسسة التدريب المهني",
+      sub: isEn ? "Hashemite Kingdom of Jordan" : "المملكة الأردنية الهاشمية",
       logo: (
         <div className="flex items-center gap-1 text-[#014482]">
           <span className="px-1.5 py-0.5 rounded bg-slate-100 font-black text-xs font-sans">VTC</span>
@@ -91,8 +100,8 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "gov-5",
-      name: "هيئة تنظيم الاتصالات",
-      sub: "المملكة الأردنية الهاشمية",
+      name: isEn ? "Telecommunications Regulatory Comm." : "هيئة تنظيم الاتصالات",
+      sub: isEn ? "Hashemite Kingdom of Jordan" : "المملكة الأردنية الهاشمية",
       logo: (
         <div className="flex flex-col items-center text-[#1874C7]">
           <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -104,21 +113,21 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "gov-6",
-      name: "أمانة عمان الكبرى",
-      sub: "المملكة الأردنية الهاشمية",
+      name: isEn ? "Greater Amman Municipality" : "أمانة عمان الكبرى",
+      sub: isEn ? "Hashemite Kingdom of Jordan" : "المملكة الأردنية الهاشمية",
       logo: (
         <div className="flex flex-col items-center">
           <div className="w-8 h-8 rounded-lg bg-[#014482] text-white flex items-center justify-center font-bold text-xs font-sans">
             GAM
           </div>
-          <span className="text-[8px] font-sans text-slate-500 mt-0.5">عمان</span>
+          <span className="text-[8px] font-sans text-slate-500 mt-0.5">Amman</span>
         </div>
       ),
     },
     {
       id: "gov-7",
-      name: "مركز تطوير المناهج",
-      sub: "المملكة الأردنية الهاشمية",
+      name: isEn ? "National Center for Curriculum Dev." : "مركز تطوير المناهج",
+      sub: isEn ? "Hashemite Kingdom of Jordan" : "المملكة الأردنية الهاشمية",
       logo: (
         <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#1874C7] flex items-center justify-center">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,8 +138,8 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "gov-8",
-      name: "صندوق الملك عبد الله",
-      sub: "المملكة الأردنية الهاشمية",
+      name: isEn ? "King Abdullah II Fund for Development" : "صندوق الملك عبد الله",
+      sub: isEn ? "Hashemite Kingdom of Jordan" : "المملكة الأردنية الهاشمية",
       logo: (
         <div className="flex items-center gap-1">
           <span className="text-xs font-black text-[#014482] font-sans">KAFD</span>
@@ -140,12 +149,12 @@ export const PartnersPageContent: React.FC = () => {
     },
   ];
 
-  // قائمة شركات ومجموعات الأعمال (القسم الثاني: المنظمات المحلية / قطاع الأعمال)
+  // قائمة شركات ومجموعات الأعمال (القسم الثاني: قطاع الأعمال)
   const privatePartners = [
     {
       id: "corp-1",
-      name: "مجموعة الاتصالات",
-      sub: "الاتصالات وتكنولوجيا المعلومات",
+      name: isEn ? "Orange Telecom Group" : "مجموعة الاتصالات",
+      sub: isEn ? "Telecommunications & Technology" : "الاتصالات وتكنولوجيا المعلومات",
       logo: (
         <div className="flex items-center gap-1.5">
           <div className="w-6 h-6 rounded bg-[#FF7900] flex items-center justify-center text-white font-bold text-[10px] font-sans">
@@ -157,8 +166,8 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "corp-2",
-      name: "شركة زين الأردن",
-      sub: "شبكات وحلول الأعمال",
+      name: isEn ? "Zain Jordan" : "شركة زين الأردن",
+      sub: isEn ? "Business & Network Solutions" : "شبكات وحلول الأعمال",
       logo: (
         <div className="flex items-center justify-center">
           <span className="text-[#00857C] font-black text-xl tracking-tighter font-sans">
@@ -169,8 +178,8 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "corp-3",
-      name: "بنك القاهرة عمان",
-      sub: "الخدمات المصرفية والمالية",
+      name: isEn ? "Cairo Amman Bank" : "بنك القاهرة عمان",
+      sub: isEn ? "Banking & Financial Services" : "الخدمات المصرفية والمالية",
       logo: (
         <div className="flex items-center gap-1.5 text-[#004B87]">
           <div className="flex flex-col items-center">
@@ -183,8 +192,8 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "corp-4",
-      name: "مجموعة الحكمة للأدوية",
-      sub: "الصناعات الدوائية والرعاية الصحية",
+      name: isEn ? "Hikma Pharmaceuticals" : "مجموعة الحكمة للأدوية",
+      sub: isEn ? "Pharmaceuticals & Healthcare" : "الصناعات الدوائية والرعاية الصحية",
       logo: (
         <div className="flex items-center gap-1 text-[#006A9A]">
           <span className="font-black text-sm font-sans tracking-tight">hikma.</span>
@@ -193,21 +202,21 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "corp-5",
-      name: "شركة البوتاس العربية",
-      sub: "التعدين والصناعات الاستخراجية",
+      name: isEn ? "Arab Potash Company" : "شركة البوتاس العربية",
+      sub: isEn ? "Mining & Extraction Industries" : "التعدين والصناعات الاستخراجية",
       logo: (
         <div className="flex flex-col items-center">
           <div className="w-6 h-6 border border-[#014482] rounded flex items-center justify-center text-[#1874C7] font-bold text-[9px] font-sans">
             APC
           </div>
-          <span className="text-[8px] font-sans text-slate-500 mt-0.5">البوتاس</span>
+          <span className="text-[8px] font-sans text-slate-500 mt-0.5">Potash</span>
         </div>
       ),
     },
     {
       id: "corp-6",
-      name: "شركة مناجم الفوسفات",
-      sub: "الموارد الوطنية والتعدين",
+      name: isEn ? "Jordan Phosphate Mines Co." : "شركة مناجم الفوسفات",
+      sub: isEn ? "National Mining & Resources" : "الموارد الوطنية والتعدين",
       logo: (
         <div className="flex items-center gap-1 text-[#014482]">
           <span className="font-black text-xs font-sans tracking-wide">JPMC</span>
@@ -217,8 +226,8 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "corp-7",
-      name: "الشركة المعاصرة للحلول الاستشارية",
-      sub: "الاستشارات المؤسسية والإدارية",
+      name: isEn ? "Contemporary Advisory Solutions" : "الشركة المعاصرة للحلول الاستشارية",
+      sub: isEn ? "Institutional & Management Advisory" : "الاستشارات المؤسسية والإدارية",
       logo: (
         <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-[#014482]">
           <svg className="w-5 h-5 text-[#1874C7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -230,8 +239,8 @@ export const PartnersPageContent: React.FC = () => {
     },
     {
       id: "corp-8",
-      name: "مؤسسة التنمية والاستثمار",
-      sub: "صناديق التمويل والمبادرات",
+      name: isEn ? "Development & Investment Foundation" : "مؤسسة التنمية والاستثمار",
+      sub: isEn ? "Investment Funds & Portfolios" : "صناديق التمويل والمبادرات",
       logo: (
         <div className="flex items-center gap-1 text-[#1874C7]">
           <span className="font-bold text-xs font-sans tracking-tighter">INVEST</span>
@@ -241,44 +250,58 @@ export const PartnersPageContent: React.FC = () => {
   ];
 
   return (
-    <div className="w-full bg-[#FCFDFE] py-8 sm:py-12" dir="rtl">
+    <div className="w-full bg-[#FCFDFE] py-8 sm:py-12 text-start" dir={isEn ? "ltr" : "rtl"}>
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-12">
         
         {/* ========================================================
-            1. الهيدر العلوي: البطاقة الرئيسية على اليمين والبطاقتين على اليسار
+            1. الهيدر العلوي: البطاقة الرئيسية وبطاقات الملخص
            ======================================================== */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6 mb-12 sm:mb-16 items-stretch">
           
-          {/* البطاقة الرئيسية (تقع أولاً لتكون على اليمين في RTL) */}
+          {/* البطاقة الرئيسية */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="lg:col-span-8 bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 md:p-10 text-right flex flex-col justify-between"
+            className="lg:col-span-8 bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 md:p-10 text-start flex flex-col justify-between"
           >
             <div>
               {/* شجرة المسار والبادج العلوي */}
               <div className="flex flex-wrap items-center justify-between gap-2 mb-4 text-xs font-sans">
                 <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 font-medium text-[11px]">
-                  أطر الإسناد المؤسسية والمصداقية المهنية
+                  {isEn
+                    ? "Institutional Endorsement & Professional Credibility"
+                    : "أطر الإسناد المؤسسية والمصداقية المهنية"}
                 </span>
                 <div className="text-slate-400 text-xs">
-                  <Link href={`/${lang}`} className="hover:text-[#1874C7] transition-colors">الرئيسية</Link>
+                  <Link href={`/${currentLang}`} className="hover:text-[#1874C7] transition-colors">
+                    {isEn ? "Home" : "الرئيسية"}
+                  </Link>
                   <span className="mx-1.5">/</span>
-                  <span className="text-[#1874C7]">الجهات والمؤسسات الشريكة</span>
+                  <span className="text-[#1874C7]">
+                    {isEn ? "Partner Organizations" : "الجهات والمؤسسات الشريكة"}
+                  </span>
                   <span className="mx-1.5">|</span>
-                  <span className="text-slate-500">سجل التوثيق المؤسسي</span>
+                  <span className="text-slate-500">
+                    {isEn ? "Institutional Registry" : "سجل التوثيق المؤسسي"}
+                  </span>
                 </div>
               </div>
 
               {/* العنوان الرئيسي */}
-              <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#014482] font-scheherazade leading-tight mb-4">
-                الجهات والمؤسسات الشريكة
+              <h1
+                className={`text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#014482] leading-tight mb-4 ${
+                  isEn ? "font-sans" : "font-scheherazade"
+                }`}
+              >
+                {isEn ? "Partner Organizations & Institutions" : "الجهات والمؤسسات الشريكة"}
               </h1>
 
               {/* الشرح */}
               <p className="text-sm md:text-base text-slate-600 font-sans leading-relaxed max-w-2xl">
-                شراكات استشارية وتوثيقية ممتدة مع الهيئات الحكومية الوطنية وشركات القطاع الخاص، لتطوير السياسات وبناء القدرات المؤسسية وتوليد الأثر المجتمعي.
+                {isEn
+                  ? "Longstanding advisory and documenting partnerships with national government entities and leading private enterprises, fostering policy development, institutional capacity building, and sustainable social impact."
+                  : "شراكات استشارية وتوثيقية ممتدة مع الهيئات الحكومية الوطنية وشركات القطاع الخاص، لتطوير السياسات وبناء القدرات المؤسسية وتوليد الأثر المجتمعي."}
               </p>
             </div>
 
@@ -286,34 +309,41 @@ export const PartnersPageContent: React.FC = () => {
             <div className="pt-6 mt-6 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs font-sans text-slate-500">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#1874C7]" />
-                <span className="font-medium text-[#014482]">توثيق الشراكات المؤسسية المعتمدة</span>
+                <span className="font-medium text-[#014482]">
+                  {isEn
+                    ? "Accredited Institutional Partnerships Registry"
+                    : "توثيق الشراكات المؤسسية المعتمدة"}
+                </span>
               </div>
               <div className="flex items-center gap-1.5 text-slate-400">
                 <svg className="w-4 h-4 text-[#1874C7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                <span>المملكة الأردنية الهاشمية — سجل رسمي معتمد</span>
+                <span>
+                  {isEn
+                    ? "Hashemite Kingdom of Jordan — Official Verified Registry"
+                    : "المملكة الأردنية الهاشمية — سجل رسمي معتمد"}
+                </span>
               </div>
             </div>
           </motion.div>
 
-          {/* البطاقتين التلخيصيتين على اليسار (lg:col-span-4) */}
+          {/* البطاقتين التلخيصيتين */}
           <div className="lg:col-span-4 flex flex-col gap-4 justify-between">
-            {/* كرت ملخص القطاع العام مع بوردر علوي عند الهوفر */}
+            {/* كرت ملخص القطاع العام */}
             <motion.div
-              initial={{ opacity: 0, x: -15 }}
+              initial={{ opacity: 0, x: isEn ? 15 : -15 }}
               animate={{ opacity: 1, x: 0 }}
               whileHover={{ y: -3, transition: { duration: 0.2 } }}
               transition={{ duration: 0.45 }}
-              className="group relative bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 text-right flex flex-col justify-between flex-1 overflow-hidden"
+              className="group relative bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 text-start flex flex-col justify-between flex-1 overflow-hidden"
             >
-              {/* البوردر العلوي عند الهوفر */}
               <div className="absolute top-0 left-0 right-0 h-[2.5px] bg-[#1874C7] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] font-sans font-medium text-[#1874C7]">
-                    سجل القطاع العام
+                    {isEn ? "Public Sector Registry" : "سجل القطاع العام"}
                   </span>
                   <div className="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center text-[#1874C7]">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -322,36 +352,44 @@ export const PartnersPageContent: React.FC = () => {
                   </div>
                 </div>
 
-                <h3 className="text-base sm:text-lg font-bold text-[#014482] font-scheherazade mb-1">
-                  الهيئات والوزارات الحكومية
+                <h3
+                  className={`text-base sm:text-lg font-bold text-[#014482] mb-1 ${
+                    isEn ? "font-sans" : "font-scheherazade"
+                  }`}
+                >
+                  {isEn ? "Government Ministries & Authorities" : "الهيئات والوزارات الحكومية"}
                 </h3>
                 <p className="text-xs text-slate-500 font-sans leading-relaxed mb-3">
-                  المؤسسات والوزارات والهيئات الرسمية في المملكة الأردنية الهاشمية.
+                  {isEn
+                    ? "Official ministries, statutory authorities, and public agencies in Jordan."
+                    : "المؤسسات والوزارات والهيئات الرسمية في المملكة الأردنية الهاشمية."}
                 </p>
               </div>
 
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-sans">
-                <span className="text-slate-400">إجمالي الهيئات الرسمية</span>
+                <span className="text-slate-400">
+                  {isEn ? "Total Public Bodies" : "إجمالي الهيئات الرسمية"}
+                </span>
                 <span className="px-2 py-0.5 rounded bg-blue-50 text-[#1874C7] font-medium">
-                  8 جهات معتمدة
+                  {isEn ? "8 Accredited Entities" : "8 جهات معتمدة"}
                 </span>
               </div>
             </motion.div>
 
-            {/* كرت ملخص قطاع الأعمال مع بوردر علوي عند الهوفر */}
+            {/* كرت ملخص قطاع الأعمال */}
             <motion.div
-              initial={{ opacity: 0, x: -15 }}
+              initial={{ opacity: 0, x: isEn ? 15 : -15 }}
               animate={{ opacity: 1, x: 0 }}
               whileHover={{ y: -3, transition: { duration: 0.2 } }}
               transition={{ duration: 0.45, delay: 0.08 }}
-              className="group relative bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 text-right flex flex-col justify-between flex-1 overflow-hidden"
+              className="group relative bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 text-start flex flex-col justify-between flex-1 overflow-hidden"
             >
               <div className="absolute top-0 left-0 right-0 h-[2.5px] bg-[#1874C7] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] font-sans font-medium text-[#1874C7]">
-                    سجل قطاع الأعمال
+                    {isEn ? "Private Sector Registry" : "سجل قطاع الأعمال"}
                   </span>
                   <div className="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center text-[#1874C7]">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -360,18 +398,26 @@ export const PartnersPageContent: React.FC = () => {
                   </div>
                 </div>
 
-                <h3 className="text-base sm:text-lg font-bold text-[#014482] font-scheherazade mb-1">
-                  شركات ومجموعات الأعمال
+                <h3
+                  className={`text-base sm:text-lg font-bold text-[#014482] mb-1 ${
+                    isEn ? "font-sans" : "font-scheherazade"
+                  }`}
+                >
+                  {isEn ? "Corporate & Enterprise Groups" : "شركات ومجموعات الأعمال"}
                 </h3>
                 <p className="text-xs text-slate-500 font-sans leading-relaxed mb-3">
-                  الشركات والمؤسسات التنموية والاستثمارية في القطاع الخاص.
+                  {isEn
+                    ? "Leading private corporations and investment development institutions."
+                    : "الشركات والمؤسسات التنموية والاستثمارية في القطاع الخاص."}
                 </p>
               </div>
 
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-sans">
-                <span className="text-slate-400">الشركات والمجموعات الرائدة</span>
+                <span className="text-slate-400">
+                  {isEn ? "Leading Corporations" : "الشركات والمجموعات الرائدة"}
+                </span>
                 <span className="px-2 py-0.5 rounded bg-blue-50 text-[#1874C7] font-medium">
-                  8 شركات 
+                  {isEn ? "8 Enterprises" : "8 شركات"}
                 </span>
               </div>
             </motion.div>
@@ -380,49 +426,60 @@ export const PartnersPageContent: React.FC = () => {
         </div>
 
         {/* ========================================================
-            2. القسم الأول: سجل القطاع العام (المنظمات الدولية)
+            2. القسم الأول: سجل القطاع العام
            ======================================================== */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6 mb-12 sm:mb-16 items-start">
           
-          {/* بطاقة تعريف القسم الأول (على اليمين في RTL) */}
-         <motion.div
+          {/* بطاقة تعريف القسم الأول */}
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="group relative lg:col-span-3 bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 text-right flex flex-col justify-between h-full overflow-hidden"
+            className="group relative lg:col-span-3 bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 text-start flex flex-col justify-between h-full overflow-hidden"
           >
-            {/* البوردر العلوي الثابت دائماً باللون الأزرق الملكي */}
             <div className="absolute top-0 left-0 right-0 h-[2.5px] bg-[#1874C7]" />
 
             <div>
               <span className="text-[11px] font-sans font-medium text-[#1874C7] block mb-1">
-                — سجل القطاع العام
+                {isEn ? "— Public Sector Registry" : "— سجل القطاع العام"}
               </span>
-              <h2 className="text-xl md:text-2xl font-bold text-[#014482] font-scheherazade mb-2">
-                المنظمات الدولية
+              <h2
+                className={`text-xl md:text-2xl font-bold text-[#014482] mb-2 ${
+                  isEn ? "font-sans" : "font-scheherazade"
+                }`}
+              >
+                {isEn ? "Public & Statutory Bodies" : "المنظمات الدولية"}
               </h2>
               <p className="text-xs text-slate-500 font-sans leading-relaxed mb-6">
-                المؤسسات والوزارات والهيئات الرسمية في المملكة الأردنية الهاشمية.
+                {isEn
+                  ? "Official ministries, statutory commissions, and agencies in the Hashemite Kingdom of Jordan."
+                  : "المؤسسات والوزارات والهيئات الرسمية في المملكة الأردنية الهاشمية."}
               </p>
 
               <div className="flex items-center gap-2 text-xs text-slate-600 font-sans mb-4">
                 <svg className="w-4 h-4 text-[#1874C7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                <span>اعتمادات وتكليفات استشارية موثقة</span>
+                <span>
+                  {isEn
+                    ? "Verified Advisory Mandates & Accreditations"
+                    : "اعتمادات وتكليفات استشارية موثقة"}
+                </span>
               </div>
             </div>
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-sans">
-              <span className="text-slate-400">إجمالي الهيئات الرسمية</span>
+              <span className="text-slate-400">
+                {isEn ? "Total Entities" : "إجمالي الهيئات الرسمية"}
+              </span>
               <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#1874C7] font-semibold text-[11px]">
-                8 جهات معتمدة
+                {isEn ? "8 Entities" : "8 جهات معتمدة"}
               </span>
             </div>
           </motion.div>
 
-          {/* شبكة الـ 8 جهات (على اليسار في RTL) */}
+          {/* شبكة الـ 8 جهات */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -437,20 +494,20 @@ export const PartnersPageContent: React.FC = () => {
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 className="group relative rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center justify-between transition-all duration-300 min-h-[148px] bg-white border border-slate-200/80 hover:border-slate-300 overflow-hidden cursor-default"
               >
-                {/* البوردر العلوي يظهر فقط عند الهوفر */}
                 <div className="absolute top-0 left-0 right-0 h-[2.5px] bg-[#1874C7] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                {/* مساحة الشعار */}
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-108 duration-300">
                   {item.logo}
                 </div>
 
-                {/* الخط الفاصل الأفقي الداخلي للكرت */}
                 <div className="w-12 h-[1px] bg-slate-100 my-2 group-hover:bg-blue-100 transition-colors" />
 
-                {/* الاسم والشرح */}
                 <div>
-                  <h3 className="text-xs sm:text-[13px] font-bold text-[#1874C7] font-scheherazade mb-0.5 leading-snug group-hover:text-[#014482] transition-colors">
+                  <h3
+                    className={`text-xs sm:text-[13px] font-bold text-[#1874C7] mb-0.5 leading-snug group-hover:text-[#014482] transition-colors ${
+                      isEn ? "font-sans" : "font-scheherazade"
+                    }`}
+                  >
                     {item.name}
                   </h3>
                   <span className="text-[10px] text-slate-400 font-sans block">
@@ -470,55 +527,68 @@ export const PartnersPageContent: React.FC = () => {
           <div className="flex-1 h-px bg-slate-200/70" />
           <span className="px-4 py-1 rounded-full bg-slate-100 text-slate-500 font-sans text-xs flex items-center gap-1.5 mx-3">
             <span className="w-1.5 h-1.5 rounded-full bg-[#1874C7]" />
-            توثيق الشراكات المؤسسية المعتمدة
+            {isEn
+              ? "Official Institutional Partnerships Documentation"
+              : "توثيق الشراكات المؤسسية المعتمدة"}
           </span>
           <div className="flex-1 h-px bg-slate-200/70" />
         </div>
 
         {/* ========================================================
-            4. القسم الثاني: سجل قطاع الأعمال (المنظمات المحلية)
+            4. القسم الثاني: سجل قطاع الأعمال
            ======================================================== */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6 mb-12 sm:mb-16 items-start">
           
-          {/* بطاقة تعريف القسم الثاني (على اليمين في RTL) */}
+          {/* بطاقة تعريف القسم الثاني */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="group relative lg:col-span-3 bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 text-right flex flex-col justify-between h-full overflow-hidden"
+            className="group relative lg:col-span-3 bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 text-start flex flex-col justify-between h-full overflow-hidden"
           >
-            {/* البوردر العلوي الثابت */}
             <div className="absolute top-0 left-0 right-0 h-[2.5px] bg-[#1874C7]" />
 
             <div>
               <span className="text-[11px] font-sans font-medium text-[#1874C7] block mb-1">
-                — سجل قطاع الأعمال
+                {isEn ? "— Business Sector Registry" : "— سجل قطاع الأعمال"}
               </span>
-              <h2 className="text-xl md:text-2xl font-bold text-[#014482] font-scheherazade mb-2">
-                المنظمات المحلية
+              <h2
+                className={`text-xl md:text-2xl font-bold text-[#014482] mb-2 ${
+                  isEn ? "font-sans" : "font-scheherazade"
+                }`}
+              >
+                {isEn ? "Private Sector Enterprises" : "المنظمات المحلية"}
               </h2>
               <p className="text-xs text-slate-500 font-sans leading-relaxed mb-6">
-                الشركات والمؤسسات التنموية والاستثمارية في القطاع الخاص.
+                {isEn
+                  ? "Development, technology, and investment corporations across the private sector."
+                  : "الشركات والمؤسسات التنموية والاستثمارية في القطاع الخاص."}
               </p>
 
               <div className="flex items-center gap-2 text-xs text-slate-600 font-sans mb-4">
                 <svg className="w-4 h-4 text-[#1874C7]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                <span>استشارات الحوكمة والتطوير وبناء السياسات</span>
+                <span>
+                  {isEn
+                    ? "Governance, Policy Structuring & Advisory"
+                    : "استشارات الحوكمة والتطوير وبناء السياسات"}
+                </span>
               </div>
             </div>
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-sans">
-              <span className="text-slate-400">الشركات والمجموعات الرائدة</span>
+              <span className="text-slate-400">
+                {isEn ? "Total Enterprises" : "الشركات والمجموعات الرائدة"}
+              </span>
               <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#1874C7] font-semibold text-[11px]">
-                8 شركات 
+                {isEn ? "8 Enterprises" : "8 شركات"}
               </span>
             </div>
           </motion.div>
 
-          {/* شبكة الـ 8 شركات (على اليسار في RTL) */}
+          {/* شبكة الـ 8 شركات */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -533,20 +603,20 @@ export const PartnersPageContent: React.FC = () => {
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 className="group relative rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center justify-between transition-all duration-300 min-h-[148px] bg-white border border-slate-200/80 hover:border-slate-300 overflow-hidden cursor-default"
               >
-                {/* البوردر العلوي يظهر فقط عند الهوفر */}
                 <div className="absolute top-0 left-0 right-0 h-[2.5px] bg-[#1874C7] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                {/* مساحة الشعار */}
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-108 duration-300">
                   {item.logo}
                 </div>
 
-                {/* الخط الفاصل الأفقي الداخلي للكرت */}
                 <div className="w-12 h-[1px] bg-slate-100 my-2 group-hover:bg-blue-100 transition-colors" />
 
-                {/* الاسم والشرح */}
                 <div>
-                  <h3 className="text-xs sm:text-[13px] font-bold text-[#1874C7] font-scheherazade mb-0.5 leading-snug group-hover:text-[#014482] transition-colors">
+                  <h3
+                    className={`text-xs sm:text-[13px] font-bold text-[#1874C7] mb-0.5 leading-snug group-hover:text-[#014482] transition-colors ${
+                      isEn ? "font-sans" : "font-scheherazade"
+                    }`}
+                  >
                     {item.name}
                   </h3>
                   <span className="text-[10px] text-slate-400 font-sans block">

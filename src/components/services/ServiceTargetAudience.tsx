@@ -2,20 +2,25 @@
 
 import React from "react";
 import { motion, type Variants } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { ServiceDetail, TargetAudienceCard } from "@/data/servicesDetailData";
 
 interface TargetAudienceInfo {
   badge?: string;
+  badgeEn?: string;
   title?: string;
+  titleEn?: string;
   description?: string;
+  descriptionEn?: string;
   cards?: TargetAudienceCard[];
 }
 
 interface ServiceTargetAudienceProps {
   service?: ServiceDetail | any;
+  lang?: string;
 }
 
-const defaultAudienceData: TargetAudienceInfo = {
+const defaultAudienceDataAr: TargetAudienceInfo = {
   badge: "توصيف المستفيدين",
   title: "لمن تناسب هذه الخدمة؟",
   description:
@@ -48,6 +53,39 @@ const defaultAudienceData: TargetAudienceInfo = {
   ],
 };
 
+const defaultAudienceDataEn: TargetAudienceInfo = {
+  badge: "Beneficiary Profiling",
+  title: "Who Is This Service For?",
+  description:
+    "Engineered to address the nuanced demands of entities navigating complex environments that require strategic public dialogue, policy engagement, and disciplined operational roadmaps.",
+  cards: [
+    {
+      number: "01",
+      title: "Civil Society & Non-Profit Organizations",
+      description:
+        "Seeking to sharpen their initiative trajectories and establish evidence-based advocacy campaigns grounded in empirical data and sound legal framing.",
+    },
+    {
+      number: "02",
+      title: "Civic Coalitions & Multi-Stakeholder Networks",
+      description:
+        "Aspiring to harmonize their collective voice, craft impactful unified messaging, and align multiple partners while preventing mandate collisions.",
+    },
+    {
+      number: "03",
+      title: "Executive Delivery Teams & Program Directors",
+      description:
+        "Requiring practical advisory to overcome operational fragmentation, map realistic priorities, and secure measurable milestone wins.",
+    },
+    {
+      number: "04",
+      title: "Grassroots & Emerging Community Initiatives",
+      description:
+        "Aiming to translate grassroots aspirations into concrete procedural steps with measurable field impact that engages decision-makers effectively.",
+    },
+  ],
+};
+
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 15 },
   visible: {
@@ -60,39 +98,74 @@ const cardVariants: Variants = {
   },
 };
 
-export const ServiceTargetAudience: React.FC<ServiceTargetAudienceProps> = ({ service }) => {
+export const ServiceTargetAudience: React.FC<ServiceTargetAudienceProps> = ({
+  service,
+  lang: propLang,
+}) => {
+  const pathname = usePathname();
+  const currentLang = propLang || (pathname?.startsWith("/en") ? "en" : "ar");
+  const isEn = currentLang === "en";
+
+  const defaultData = isEn ? defaultAudienceDataEn : defaultAudienceDataAr;
   const targetAudience = service?.targetAudience || service?.featuredAudience || {};
-  const badge = targetAudience.badge || defaultAudienceData.badge;
-  const title = targetAudience.title || defaultAudienceData.title;
-  const description = targetAudience.description || defaultAudienceData.description;
-  const cards: TargetAudienceCard[] =
+
+  const badge = isEn
+    ? targetAudience.badgeEn || service?.targetAudienceEn?.badge || defaultData.badge
+    : targetAudience.badge || defaultData.badge;
+
+  const title = isEn
+    ? targetAudience.titleEn || service?.targetAudienceEn?.title || defaultData.title
+    : targetAudience.title || defaultData.title;
+
+  const description = isEn
+    ? targetAudience.descriptionEn || service?.targetAudienceEn?.description || defaultData.description
+    : targetAudience.description || defaultData.description;
+
+  const defaultCards = defaultData.cards || [];
+  const rawCards =
     (targetAudience.cards && targetAudience.cards.length > 0
       ? targetAudience.cards
-      : service?.audienceCards) || defaultAudienceData.cards || [];
+      : service?.audienceCards) || defaultCards;
 
-  const card01 = cards[0] || defaultAudienceData.cards![0];
-  const card02 = cards[1] || defaultAudienceData.cards![1];
-  const card03 = cards[2] || defaultAudienceData.cards![2];
-  const card04 = cards[3] || defaultAudienceData.cards![3];
+  const cards = rawCards.map((c: any, i: number) => {
+    const fallback = defaultCards[i] || defaultCards[0];
+    return {
+      number: c.number || fallback.number,
+      title: isEn ? c.titleEn || fallback.title : c.title || fallback.title,
+      description: isEn ? c.descriptionEn || fallback.description : c.description || fallback.description,
+    };
+  });
+
+  const card01 = cards[0];
+  const card02 = cards[1];
+  const card03 = cards[2];
+  const card04 = cards[3];
 
   return (
-    <section className="w-full py-12 md:py-16 bg-white" dir="rtl">
+    <section
+      dir={isEn ? "ltr" : "rtl"}
+      className="w-full py-12 md:py-16 bg-white text-start"
+    >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 items-stretch">
           
-          {/* 1. الكرت الأزرق المميز */}
+          {/* 1. الكرت الأزرق المميز (يمتد ليشغل صفين في الشاشات الكبيرة) */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-30px" }}
             transition={{ duration: 0.45 }}
-            className="lg:col-start-1 lg:row-start-1 bg-gradient-to-br from-[#1874C7] via-[#0E5CA8] to-[#014482] text-white rounded-2xl p-6 md:p-7 flex flex-col justify-start text-right shadow-md shadow-blue-900/10 relative overflow-hidden"
+            className="lg:col-start-1 lg:row-start-1 lg:row-span-2 bg-gradient-to-br from-[#1874C7] via-[#0E5CA8] to-[#014482] text-white rounded-2xl p-6 md:p-7 flex flex-col justify-start text-start shadow-md shadow-blue-900/10 relative overflow-hidden"
           >
             <span className="text-xs font-normal text-blue-100/80 mb-2 block font-sans">
               {badge}
             </span>
 
-            <h3 className="font-scheherazade text-2xl lg:text-[28px] font-bold text-white leading-snug mb-3">
+            <h3
+              className={`text-2xl lg:text-[28px] font-bold text-white leading-snug mb-3 ${
+                isEn ? "font-sans" : "font-scheherazade"
+              }`}
+            >
               {title}
             </h3>
 
@@ -108,7 +181,7 @@ export const ServiceTargetAudience: React.FC<ServiceTargetAudienceProps> = ({ se
             whileInView="visible"
             viewport={{ once: true, margin: "-30px" }}
             whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="group relative lg:col-start-2 lg:row-start-1 bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-5 md:p-6 text-right flex flex-col justify-between hover:shadow-md hover:shadow-blue-500/5 transition-all duration-300 overflow-hidden"
+            className="group relative lg:col-start-2 lg:row-start-1 bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-5 md:p-6 text-start flex flex-col justify-between hover:shadow-md hover:shadow-blue-500/5 transition-all duration-300 overflow-hidden"
           >
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#1874C7] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div>
@@ -117,7 +190,11 @@ export const ServiceTargetAudience: React.FC<ServiceTargetAudienceProps> = ({ se
                   {card01.number}
                 </span>
               </div>
-              <h4 className="text-base md:text-lg font-bold text-[#014482] font-scheherazade mb-2 group-hover:text-[#1874C7] transition-colors duration-200">
+              <h4
+                className={`text-base md:text-lg font-bold text-[#014482] mb-2 group-hover:text-[#1874C7] transition-colors duration-200 ${
+                  isEn ? "font-sans" : "font-scheherazade"
+                }`}
+              >
                 {card01.title}
               </h4>
               <p className="text-xs md:text-[13px] text-slate-600 leading-relaxed font-sans font-normal">
@@ -133,7 +210,7 @@ export const ServiceTargetAudience: React.FC<ServiceTargetAudienceProps> = ({ se
             whileInView="visible"
             viewport={{ once: true, margin: "-30px" }}
             whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="group relative lg:col-start-3 lg:row-start-1 bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-5 md:p-6 text-right flex flex-col justify-between hover:shadow-md hover:shadow-blue-500/5 transition-all duration-300 overflow-hidden"
+            className="group relative lg:col-start-3 lg:row-start-1 bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-5 md:p-6 text-start flex flex-col justify-between hover:shadow-md hover:shadow-blue-500/5 transition-all duration-300 overflow-hidden"
           >
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#1874C7] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div>
@@ -142,7 +219,11 @@ export const ServiceTargetAudience: React.FC<ServiceTargetAudienceProps> = ({ se
                   {card02.number}
                 </span>
               </div>
-              <h4 className="text-base md:text-lg font-bold text-[#014482] font-scheherazade mb-2 group-hover:text-[#1874C7] transition-colors duration-200">
+              <h4
+                className={`text-base md:text-lg font-bold text-[#014482] mb-2 group-hover:text-[#1874C7] transition-colors duration-200 ${
+                  isEn ? "font-sans" : "font-scheherazade"
+                }`}
+              >
                 {card02.title}
               </h4>
               <p className="text-xs md:text-[13px] text-slate-600 leading-relaxed font-sans font-normal">
@@ -158,7 +239,7 @@ export const ServiceTargetAudience: React.FC<ServiceTargetAudienceProps> = ({ se
             whileInView="visible"
             viewport={{ once: true, margin: "-30px" }}
             whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="group relative lg:col-start-2 lg:row-start-2 bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-5 md:p-6 text-right flex flex-col justify-between hover:shadow-md hover:shadow-blue-500/5 transition-all duration-300 overflow-hidden"
+            className="group relative lg:col-start-2 lg:row-start-2 bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-5 md:p-6 text-start flex flex-col justify-between hover:shadow-md hover:shadow-blue-500/5 transition-all duration-300 overflow-hidden"
           >
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#1874C7] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div>
@@ -167,7 +248,11 @@ export const ServiceTargetAudience: React.FC<ServiceTargetAudienceProps> = ({ se
                   {card03.number}
                 </span>
               </div>
-              <h4 className="text-base md:text-lg font-bold text-[#014482] font-scheherazade mb-2 group-hover:text-[#1874C7] transition-colors duration-200">
+              <h4
+                className={`text-base md:text-lg font-bold text-[#014482] mb-2 group-hover:text-[#1874C7] transition-colors duration-200 ${
+                  isEn ? "font-sans" : "font-scheherazade"
+                }`}
+              >
                 {card03.title}
               </h4>
               <p className="text-xs md:text-[13px] text-slate-600 leading-relaxed font-sans font-normal">
@@ -183,7 +268,7 @@ export const ServiceTargetAudience: React.FC<ServiceTargetAudienceProps> = ({ se
             whileInView="visible"
             viewport={{ once: true, margin: "-30px" }}
             whileHover={{ y: -3, transition: { duration: 0.2 } }}
-            className="group relative lg:col-start-3 lg:row-start-2 bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-5 md:p-6 text-right flex flex-col justify-between hover:shadow-md hover:shadow-blue-500/5 transition-all duration-300 overflow-hidden"
+            className="group relative lg:col-start-3 lg:row-start-2 bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-5 md:p-6 text-start flex flex-col justify-between hover:shadow-md hover:shadow-blue-500/5 transition-all duration-300 overflow-hidden"
           >
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#1874C7] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div>
@@ -192,7 +277,11 @@ export const ServiceTargetAudience: React.FC<ServiceTargetAudienceProps> = ({ se
                   {card04.number}
                 </span>
               </div>
-              <h4 className="text-base md:text-lg font-bold text-[#014482] font-scheherazade mb-2 group-hover:text-[#1874C7] transition-colors duration-200">
+              <h4
+                className={`text-base md:text-lg font-bold text-[#014482] mb-2 group-hover:text-[#1874C7] transition-colors duration-200 ${
+                  isEn ? "font-sans" : "font-scheherazade"
+                }`}
+              >
                 {card04.title}
               </h4>
               <p className="text-xs md:text-[13px] text-slate-600 leading-relaxed font-sans font-normal">

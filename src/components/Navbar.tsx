@@ -5,8 +5,10 @@ import { Menu, X, Mail, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getTranslations } from "@/data/translations";
 
 interface NavbarProps {
+  lang?: string;
   activeSection?: string;
   onNavigate?: (sectionId: string) => void;
   onOpenContactModal?: () => void;
@@ -22,12 +24,16 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const pathname = usePathname();
   const currentLang = pathname?.startsWith("/en") ? "en" : "ar";
-  const targetLang = currentLang === "ar" ? "en" : "ar";
+  const isEn = currentLang === "en";
+  const targetLang = isEn ? "ar" : "en";
   const switchLangPath = pathname
     ? pathname.replace(`/${currentLang}`, `/${targetLang}`)
     : `/${targetLang}`;
 
   const isHome = pathname === `/${currentLang}` || pathname === `/${currentLang}/`;
+
+  // جلب الترجمة بحسب اللغة الحالية
+  const t = getTranslations(currentLang);
 
   // تفعيل الشفافية والظل عند التمرير
   useEffect(() => {
@@ -38,40 +44,40 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // إغلاق قائمة الموبايل تلقائياً عند تغيير المسار
+  // إغلاق قائمة الموبايل عند تغيير الصفحة
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  // قائمة الروابط الرئيسية
+  // قائمة الروابط من ملف الترجمة
   const navLinks = [
     {
       id: "home",
-      label: "الرئيسية",
+      label: t.nav.home,
       href: `/${currentLang}`,
       isActive: isHome && (!activeSection || activeSection === "hero"),
     },
     {
       id: "about",
-      label: "عن عماد",
+      label: t.nav.about,
       href: `/${currentLang}/about`,
       isActive: pathname?.startsWith(`/${currentLang}/about`),
     },
     {
       id: "services",
-      label: "الخدمات",
+      label: t.nav.services,
       href: `/${currentLang}/services`,
       isActive: pathname?.startsWith(`/${currentLang}/services`),
     },
     {
       id: "projects",
-      label: "الخبرات والمشاريع",
+      label: t.nav.projects,
       href: `/${currentLang}/projects`,
       isActive: pathname?.startsWith(`/${currentLang}/projects`),
     },
     {
       id: "guides",
-      label: "الأدلة والمعرفة",
+      label: t.nav.guides,
       href: `/${currentLang}/guides`,
       isActive: pathname?.startsWith(`/${currentLang}/guides`),
     },
@@ -101,25 +107,31 @@ export const Navbar: React.FC<NavbarProps> = ({
           ? "bg-white/90 backdrop-blur-md shadow-xs border-b border-slate-100 py-0"
           : "bg-white/95 backdrop-blur-xs border-b border-slate-100/80 py-1"
       }`}
-      dir="rtl"
+      dir={isEn ? "ltr" : "rtl"}
     >
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-12 h-16 sm:h-[68px] flex items-center justify-between transition-all duration-300">
         
-        {/* الشعار / الاسم */}
+        {/* الشعار / الاسم (ينقلب تلقائياً لليسار في الإنجليزية ولليمين في العربية) */}
         <Link
           href={`/${currentLang}`}
           className="flex items-center gap-2 text-start focus:outline-none rounded-lg p-0.5 cursor-pointer"
-          aria-label="الصفحة الرئيسية - عماد أبو صالح الفناطسة"
+          aria-label={`Home - ${t.brand.name}`}
         >
-          <span className="font-scheherazade text-xl sm:text-2xl lg:text-[25px] font-bold text-[#014482] tracking-tight hover:text-[#1874C7] transition-colors">
-            عماد أبو صالح الفناطسة
+          <span
+            className={`font-bold text-[#014482] tracking-tight hover:text-[#1874C7] transition-colors ${
+              isEn
+                ? "font-sans text-base sm:text-lg lg:text-[20px]"
+                : "font-scheherazade text-xl sm:text-2xl lg:text-[25px]"
+            }`}
+          >
+            {t.brand.name}
           </span>
         </Link>
 
         {/* روابط التنقل لسطح المكتب */}
         <nav
-          className="hidden lg:flex items-center gap-6 xl:gap-7"
-          aria-label="التنقل الرئيسي"
+          className="hidden lg:flex items-center gap-5 xl:gap-7"
+          aria-label="Main Navigation"
         >
           {navLinks.map((link, index) => {
             const active = link.isActive;
@@ -133,14 +145,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <Link
                   href={link.href}
                   onClick={(e) => handleAnchorClick(e, link.href)}
-                  className={`relative py-1 font-scheherazade text-base xl:text-[17px] cursor-pointer transition-colors duration-200 group block ${
+                  className={`relative py-1 cursor-pointer transition-colors duration-200 group block ${
+                    isEn
+                      ? "font-sans text-xs lg:text-[14px]"
+                      : "font-scheherazade text-base xl:text-[17px]"
+                  } ${
                     active
                       ? "text-[#1874C7] font-bold"
                       : "text-[#014482]/90 hover:text-[#1874C7] font-medium"
                   }`}
                 >
                   {link.label}
-                  {/* خط سفلي ناعم للعنصر النشط وعند الهوفر */}
+                  {/* خط سفلي ناعم للعنصر النشط */}
                   <span
                     className={`absolute -bottom-1 inset-x-0 h-[2px] rounded-full bg-[#1874C7] transition-transform duration-200 origin-center ${
                       active
@@ -154,13 +170,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* أزرار اليسار لسطح المكتب: مبدل اللغة + زر تواصل معنا */}
+        {/* أزرار سطح المكتب: مبدل اللغة + زر تواصل معنا */}
         <div className="hidden sm:flex items-center gap-3">
           {/* زر تبديل اللغة */}
           <Link
             href={switchLangPath}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200/80 hover:border-[#1874C7]/40 bg-white hover:bg-blue-50/50 text-[#014482] text-xs font-sans font-semibold tracking-wider transition-all"
-            aria-label="تبديل اللغة"
+            aria-label="Switch Language"
           >
             <Globe className="w-3.5 h-3.5 text-[#1874C7]" />
             <span className={currentLang === "en" ? "text-[#1874C7] font-bold" : "text-gray-400"}>
@@ -184,7 +200,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 : "bg-[#1874C7] hover:bg-[#014482] text-white"
             }`}
           >
-            تواصل معنا
+            {t.nav.contact}
           </Link>
         </div>
 
@@ -203,7 +219,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 text-[#014482] hover:bg-slate-50 active:bg-slate-100 rounded-xl focus:outline-none transition-colors"
-            aria-label={mobileMenuOpen ? "إغلاق القائمة" : "فتح القائمة الرئيسية"}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="w-5 h-5 text-[#1874C7]" /> : <Menu className="w-5 h-5" />}
@@ -211,9 +227,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* ========================================================
-          قائمة الموبايل المنسدلة بتصميم لطيف وناعم
-          ======================================================== */}
+      {/* قائمة الموبايل المنسدلة */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -233,7 +247,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                     key={link.id}
                     href={link.href}
                     onClick={(e) => handleAnchorClick(e, link.href)}
-                    className={`w-full flex items-center justify-between py-2.5 px-3.5 rounded-xl text-[17px] font-scheherazade transition-all duration-200 ${
+                    className={`w-full flex items-center justify-between py-2.5 px-3.5 rounded-xl transition-all duration-200 ${
+                      isEn
+                        ? "text-sm font-sans"
+                        : "text-[17px] font-scheherazade"
+                    } ${
                       active
                         ? "bg-blue-50/90 text-[#1874C7] font-bold"
                         : "text-[#014482] hover:bg-slate-50 active:bg-slate-100 font-medium"
@@ -247,17 +265,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 );
               })}
 
-              {/* قسم الإجراء والتواصل بالأسفل (بدون عبارة نستحق وأكثر) */}
+              {/* قسم الإجراء والتواصل بالأسفل */}
               <div className="pt-4 mt-2 border-t border-slate-100 flex flex-col gap-3">
                 <Link
                   href={`/${currentLang}/contact`}
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full py-3 rounded-xl bg-[#014482] hover:bg-[#1874C7] active:scale-[0.99] text-white font-sans font-medium text-xs sm:text-sm text-center transition-all shadow-xs"
                 >
-                  تواصل معنا
+                  {t.nav.contact}
                 </Link>
 
-                {/* البريد الإلكتروني بشكل هادئ وناعم */}
                 <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 font-sans pt-1">
                   <Mail className="w-3.5 h-3.5 text-slate-400" />
                   <span>emad.abusaleh@gmail.com</span>

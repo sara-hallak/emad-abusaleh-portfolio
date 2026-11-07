@@ -3,6 +3,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { getTranslations } from "@/data/translations";
 
 interface AboutHeroProps {
   lang?: string;
@@ -61,32 +63,12 @@ export default function AboutHero({
   lang = "ar",
   imageSrc = "/images/emad-portrait.jpg",
 }: AboutHeroProps) {
-  const credentials = [
-    {
-      target: 18,
-      prefix: "+",
-      label: "عاماً من الخبرة الاستشارية والتنموية",
-      detail: "خبرة مهنية",
-    },
-    {
-      target: 140,
-      prefix: "+",
-      label: "منظمة ومؤسسة دولية ومحلية شريكة",
-      detail: "شراكات مؤسسية",
-    },
-    {
-      target: 900,
-      prefix: "+",
-      label: "نشاط وتدخل استراتيجي وميداني",
-      detail: "إنجازات ميدانية",
-    },
-    {
-      target: 2023,
-      prefix: "",
-      label: "عضوية نقابة المحامين الأردنيين",
-      detail: "اعتماد مهني",
-    },
-  ];
+  const pathname = usePathname();
+  const currentLang = pathname?.startsWith("/en") ? "en" : "ar";
+  const isEn = currentLang === "en";
+
+  const t = getTranslations(currentLang);
+  const credentials = t.aboutPage.stats;
 
   const fadeUp = {
     hidden: { opacity: 0, y: 15 },
@@ -95,7 +77,7 @@ export default function AboutHero({
 
   return (
     <section
-      dir="rtl"
+      dir={isEn ? "ltr" : "rtl"}
       className="relative isolate overflow-hidden bg-white text-right"
     >
       {/* 1. تدرج الخلفية الريشي المنساب */}
@@ -113,7 +95,7 @@ export default function AboutHero({
       <div className="mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8">
 
         {/* ========================================================
-            2. الاسم والتوصيف مع أنيميشن ناعم
+            2. الاسم والتوصيف
             ======================================================= */}
         <div className="pt-10 sm:pt-14 text-center">
           <motion.div
@@ -123,34 +105,48 @@ export default function AboutHero({
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center"
           >
-            <h1 className="font-scheherazade text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-bold text-[#014482] leading-tight mb-2 drop-shadow-2xs">
-              عماد أبو صالح الفناطسة
+            <h1
+              className={`font-bold text-[#014482] leading-tight mb-2 drop-shadow-2xs ${
+                isEn
+                  ? "font-sans text-3xl sm:text-4xl lg:text-[46px]"
+                  : "font-scheherazade text-3xl sm:text-4xl md:text-5xl lg:text-[54px]"
+              }`}
+            >
+              {t.aboutPage.name}
             </h1>
 
-            <p className="font-sans text-xs sm:text-sm md:text-base text-[#1874C7] font-semibold max-w-xl leading-relaxed">
-              مستشار استراتيجي وباحث قانوني في السياسات التنموية وبناء التحالفات
+            <p
+              className={`text-[#1874C7] font-semibold max-w-xl leading-relaxed ${
+                isEn
+                  ? "font-sans text-xs sm:text-sm lg:text-[15px]"
+                  : "font-sans text-xs sm:text-sm md:text-base"
+              }`}
+            >
+              {t.aboutPage.role}
             </p>
           </motion.div>
         </div>
 
         {/* ========================================================
-            3. صورة عماد: حركة المستطيل المائل وزووم وهوفر تفاعلي
+            3. صورة عماد: المستطيل المائل يلتف بالاتجاه المناسب
             ======================================================= */}
         <div className="relative mx-auto mt-7 sm:mt-9 w-full max-w-[290px] sm:max-w-[320px] group">
           
-          {/* المستطيل المائل الخلفي بتدريج الأزرق الملكي */}
+          {/* المستطيل المائل الخلفي: يدور بالاتجاه المعاكس في الإنجليزية */}
           <motion.div
-            initial={{ opacity: 0, rotate: -8, scale: 0.9 }}
-            animate={{ opacity: 1, rotate: -4, scale: 1 }}
+            initial={{ opacity: 0, rotate: isEn ? 8 : -8, scale: 0.9 }}
+            animate={{ opacity: 1, rotate: isEn ? 4 : -4, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
-            className="absolute -inset-1.5 rounded-[28px] pointer-events-none transition-transform duration-500 ease-out group-hover:rotate-[-6deg] group-hover:scale-105 shadow-[0_15px_40px_-10px_rgba(24,116,199,0.35)]"
+            className={`absolute -inset-1.5 rounded-[28px] pointer-events-none transition-transform duration-500 ease-out shadow-[0_15px_40px_-10px_rgba(24,116,199,0.35)] ${
+              isEn ? "group-hover:rotate-[6deg]" : "group-hover:rotate-[-6deg]"
+            } group-hover:scale-105`}
             style={{
               background:
                 "linear-gradient(135deg, #1874C7 0%, #085da8 45%, #014482 85%, #012b54 100%)",
             }}
           />
 
-          {/* هالة توهج خلفية ناعمة */}
+          {/* هالة توهج خلفية */}
           <div 
             className="absolute -inset-4 rounded-[36px] pointer-events-none opacity-60 blur-xl group-hover:opacity-90 transition-opacity duration-500"
             style={{
@@ -164,17 +160,16 @@ export default function AboutHero({
             initial={{ opacity: 0, y: 15, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative aspect-[4/5] overflow-hidden rounded-[26px] bg-[#014482] p-1.5  shadow-[0_16px_45px_-12px_rgba(1,68,130,0.28)] transition-all duration-500 group-hover:-translate-y-1.5"
+            className="relative aspect-[4/5] overflow-hidden rounded-[26px] bg-[#014482] p-1.5 shadow-[0_16px_45px_-12px_rgba(1,68,130,0.28)] transition-all duration-500 group-hover:-translate-y-1.5"
             style={{
               background: "linear-gradient(160deg, #1874C7 0%, #014482 70%, #012547 100%)",
             }}
           >
-            {/* لمعة إضاءة زجاجية علوية */}
             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/20 pointer-events-none rounded-[24px] z-10" />
 
             <img
               src={imageSrc}
-              alt="عماد أبو صالح الفناطسة"
+              alt={t.aboutPage.name}
               className="h-full w-full object-cover object-top rounded-[20px] select-none transition-transform duration-700 ease-out group-hover:scale-110 relative z-0"
               onError={(e) => {
                 e.currentTarget.onerror = null;
@@ -192,7 +187,7 @@ export default function AboutHero({
             className="absolute -bottom-3.5 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full border border-slate-200/90 bg-white/95 backdrop-blur-md px-4 sm:px-5 py-1.5 shadow-md shadow-blue-900/10 group-hover:-translate-y-1 group-hover:border-[#1874C7]/50 transition-all duration-300"
           >
             <span className="text-[11px] sm:text-xs font-sans font-semibold text-[#014482]">
-              مستشار استراتيجي وباحث قانوني
+              {t.aboutPage.badge}
             </span>
           </motion.div>
         </div>
@@ -207,27 +202,31 @@ export default function AboutHero({
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mx-auto mt-10 sm:mt-11 max-w-[680px] text-center"
         >
-          <h2 className="mb-2.5 font-scheherazade text-xl sm:text-2xl font-bold text-[#014482]">
-            الخبرة في خدمة الرؤية والأثر التنموي
+          <h2
+            className={`mb-2.5 font-bold text-[#014482] ${
+              isEn ? "font-sans text-xl sm:text-2xl" : "font-scheherazade text-xl sm:text-2xl"
+            }`}
+          >
+            {t.aboutPage.sectionTitle}
           </h2>
 
-          <p className="font-sans text-xs sm:text-sm leading-[2] text-slate-600 font-normal mb-6">
-            خبير سياساتي وتنموي بخبرة تزيد عن 18 عاماً في هندسة المبادرات وتيسير
-            الحوار التوافقي والتمكين المؤسسي. حاصل على بكالوريوس في العلاقات
-            الدولية والدراسات الاستراتيجية، وبكالوريوس في القانون وباحث
-            ماجستير في القانون، وعضو في نقابة المحامين الأردنيين. قاد وأشرف
-            على أكثر من 900 تدخل استشاري وتدريبي بالتعاون مع كبرى الهيئات
-            الدولية والوطنية، مكرساً مسيرته لربط الرؤى السياساتية بالأثر
-            المجتمعي المستدام.
+          <p
+            className={`text-slate-600 font-normal mb-6 ${
+              isEn
+                ? "font-sans text-xs sm:text-[13px] leading-[1.8]"
+                : "font-sans text-xs sm:text-sm leading-[2]"
+            }`}
+          >
+            {t.aboutPage.bio}
           </p>
 
           <Link
             href={`/${lang}/contact`}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#014482] hover:bg-[#1874C7] active:scale-95 px-7 py-2.5 sm:py-3 font-sans text-xs sm:text-[13px] font-semibold text-white shadow-xs hover:shadow-md hover:shadow-blue-900/15 transition-all duration-300 hover:-translate-y-0.5 group/btn"
           >
-            <span>طلب استشارة أو تواصل مباشر</span>
-            <span className="transition-transform duration-300 group-hover/btn:-translate-x-1">
-              ←
+            <span>{t.aboutPage.ctaBtn}</span>
+            <span className="transition-transform duration-300 group-hover/btn:translate-x-1">
+              {isEn ? "→" : "←"}
             </span>
           </Link>
         </motion.div>
@@ -244,10 +243,14 @@ export default function AboutHero({
         >
           <div className="mb-6">
             <span className="text-[11px] sm:text-xs font-sans font-medium text-[#1874C7] block mb-0.5">
-              مؤشرات الاعتماد
+              {t.aboutPage.credentialsBadge}
             </span>
-            <h3 className="font-scheherazade text-xl sm:text-2xl font-bold text-[#014482]">
-              ركائز الخبرة والإنجاز الميداني
+            <h3
+              className={`font-bold text-[#014482] ${
+                isEn ? "font-sans text-xl sm:text-2xl" : "font-scheherazade text-xl sm:text-2xl"
+              }`}
+            >
+              {t.aboutPage.credentialsTitle}
             </h3>
           </div>
 
@@ -265,7 +268,11 @@ export default function AboutHero({
                   {item.detail}
                 </span>
 
-                <span className="font-scheherazade text-3xl sm:text-4xl font-bold leading-none text-[#1874C7] group-hover:text-[#014482] transition-colors duration-300 mb-1.5">
+                <span
+                  className={`font-bold leading-none text-[#1874C7] group-hover:text-[#014482] transition-colors duration-300 mb-1.5 ${
+                    isEn ? "font-sans text-2xl sm:text-3xl" : "font-scheherazade text-3xl sm:text-4xl"
+                  }`}
+                >
                   <AnimatedCounter
                     target={item.target}
                     prefix={item.prefix}
@@ -273,7 +280,13 @@ export default function AboutHero({
                   />
                 </span>
 
-                <span className="max-w-[155px] font-sans text-[11px] sm:text-xs leading-relaxed text-slate-500 font-normal">
+                <span
+                  className={`max-w-[155px] text-slate-500 font-normal ${
+                    isEn
+                      ? "font-sans text-[11px] leading-[1.4]"
+                      : "font-sans text-[11px] sm:text-xs leading-relaxed"
+                  }`}
+                >
                   {item.label}
                 </span>
               </motion.div>

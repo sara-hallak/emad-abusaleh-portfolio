@@ -4,8 +4,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getTranslations } from "@/data/translations";
 
-// قائمة الشركاء مطابقة للصورة تماماً
+// قائمة الشركاء الرئيسية
 const PARTNERS = [
   {
     id: "giz",
@@ -85,18 +86,27 @@ const PARTNERS = [
   },
 ];
 
-// مضاعفة القائمة لضمان انزلاق لانهائي سلس بدون أي انقطاع
+// مضاعفة القائمة لضمان انزلاق لانهائي سلس
 const MARQUEE_ITEMS = [...PARTNERS, ...PARTNERS, ...PARTNERS, ...PARTNERS];
 
 export const PartnersMarquee: React.FC = () => {
   const pathname = usePathname();
   const currentLang = pathname?.startsWith("/en") ? "en" : "ar";
+  const isEn = currentLang === "en";
+
+  const t = getTranslations(currentLang);
 
   return (
-    <section className="relative w-full bg-[#014482] text-white py-14 sm:py-18 overflow-hidden select-none">
-      
-      {/* الرسمة الهندسية المائية في الزاوية اليمنى */}
-      <div className="absolute top-1/2 -translate-y-1/2 -right-16 sm:right-4 w-72 h-72 sm:w-96 sm:h-96 pointer-events-none opacity-[0.06]">
+    <section
+      className="relative w-full bg-[#014482] text-white py-14 sm:py-18 overflow-hidden select-none"
+      dir={isEn ? "ltr" : "rtl"}
+    >
+      {/* الرسمة الهندسية المائية في زاوية السكشن */}
+      <div
+        className={`absolute top-1/2 -translate-y-1/2 w-72 h-72 sm:w-96 sm:h-96 pointer-events-none opacity-[0.06] ${
+          isEn ? "-left-16 sm:left-4" : "-right-16 sm:right-4"
+        }`}
+      >
         <svg viewBox="0 0 200 200" className="w-full h-full stroke-current" fill="none">
           <circle cx="100" cy="100" r="85" strokeWidth="1" strokeDasharray="4 4" />
           <circle cx="100" cy="100" r="60" strokeWidth="1" strokeDasharray="3 3" />
@@ -108,8 +118,7 @@ export const PartnersMarquee: React.FC = () => {
       </div>
 
       <div className="relative z-10">
-        
-        {/* الترويسة في المنتصف مطابقة للصورة */}
+        {/* الترويسة في المنتصف مع تبديل الخط تلقائياً */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -117,11 +126,23 @@ export const PartnersMarquee: React.FC = () => {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 px-4"
         >
-          <h2 className="font-scheherazade text-3xl sm:text-4xl lg:text-[42px] font-bold text-white leading-tight mb-2">
-            جهات ومؤسسات تم العمل معها
+          <h2
+            className={`font-bold text-white leading-tight mb-2 ${
+              isEn
+                ? "font-sans text-2xl sm:text-3xl lg:text-[36px]"
+                : "font-scheherazade text-3xl sm:text-4xl lg:text-[42px]"
+            }`}
+          >
+            {t.partners.title}
           </h2>
-          <p className="font-scheherazade text-sm sm:text-base lg:text-[17px] text-white/80 font-normal leading-relaxed">
-            منظمات محلية ودولية ساهمت في إنجاح مبادرات ومشاريع مشتركة
+          <p
+            className={`text-white/80 font-normal leading-relaxed ${
+              isEn
+                ? "font-sans text-xs sm:text-sm lg:text-[15px]"
+                : "font-scheherazade text-sm sm:text-base lg:text-[17px]"
+            }`}
+          >
+            {t.partners.desc}
           </p>
         </motion.div>
 
@@ -133,7 +154,7 @@ export const PartnersMarquee: React.FC = () => {
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{
-              duration: 24, // سرعة حركة هادئة وانسيابية
+              duration: 24,
               repeat: Infinity,
               repeatType: "loop",
               ease: "linear",
@@ -150,7 +171,7 @@ export const PartnersMarquee: React.FC = () => {
                 <Link
                   href={`/${currentLang}/partners`}
                   className="bg-white rounded-xl sm:rounded-2xl h-14 sm:h-16 px-5 sm:px-7 flex items-center justify-center shadow-md shadow-blue-950/20 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-white/10 block"
-                  title={`عرض الشراكة مع ${partner.name}`}
+                  title={`${t.partners.viewPartnership} ${partner.name}`}
                 >
                   {partner.logo}
                 </Link>
@@ -158,7 +179,6 @@ export const PartnersMarquee: React.FC = () => {
             ))}
           </motion.div>
         </div>
-
       </div>
     </section>
   );

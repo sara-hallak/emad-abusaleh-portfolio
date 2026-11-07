@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import GuidesHero  from "@/components/guides/GuidesHero";
 import FeaturedGuideSection from "@/components/guides/FeaturedGuideSection";
 import KnowledgeLibrary from "@/components/guides/KnowledgeLibrary";
+import { ConsultationCTA } from "@/components/ConsultationCTA";
 
 interface GuidesPageProps {
   params: Promise<{ lang: string }>;
@@ -23,8 +24,7 @@ async function GuidesPageContent({ params }: GuidesPageProps) {
       <FeaturedGuideSection lang={lang} />
 
       <KnowledgeLibrary lang={lang} />
-
-
+      <ConsultationCTA />
       {/* التذييل */}
       <Footer />
     </main>

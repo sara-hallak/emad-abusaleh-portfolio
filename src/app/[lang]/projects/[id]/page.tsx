@@ -24,6 +24,7 @@ async function ProjectDetailContent({
   params: Promise<{ lang: string; id: string }>;
 }) {
   const { lang, id } = await params;
+  const isEn = lang === "en";
   const project = getProjectById(id);
 
   if (!project) {
@@ -31,18 +32,17 @@ async function ProjectDetailContent({
   }
 
   return (
-    <main className="min-h-screen bg-white flex flex-col justify-between" dir="rtl">
+    <main
+      className="min-h-screen bg-white flex flex-col justify-between"
+      dir={isEn ? "ltr" : "rtl"}
+    >
       <Navbar />
 
       <div className="flex-1">
-        {/* السكشن الأول للهيرو مطابق للصورة تماماً */}
-        <ProjectDetailHero project={project} />
-
-         <ProjectOverview project={project} />
-
-         <ProjectObjectivesAndRole project={project} />
-
-          <ProjectProcessAndEvidence project={project} />
+        <ProjectDetailHero project={project} lang={lang} />
+        <ProjectOverview project={project} lang={lang} />
+        <ProjectObjectivesAndRole project={project} lang={lang} />
+        <ProjectProcessAndEvidence project={project} lang={lang} />
       </div>
 
       <ConsultationCTA />

@@ -29,25 +29,48 @@ const scheherazade = localFont({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "عماد أبو صالح",
-  description: "الموقع الشخصي",
-};
+export function generateStaticParams() {
+  return [{ lang: "ar" }, { lang: "en" }];
+}
 
-export default function RootLayout({
+// توليد العنوان والوصف بحسب لغة الرابط
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+
+  return {
+    title: isEn
+      ? "Emad Abu Saleh | Strategic Advisory & Field Programs"
+      : "المستشار عماد أبو صالح الفناطسة | التخطيط والمناصرة والسياسات العامة",
+    description: isEn
+      ? "Official portfolio of Emad Abu Saleh Al-Fanatseh: Strategic planning, advocacy campaigns, institutional training, and procedural manual authoring."
+      : "الموقع الرسمي للمستشار عماد أبو صالح الفناطسة: التخطيط الاستراتيجي، قيادة حملات المناصرة، التدريب، وإعداد الأدلة الإجرائية.",
+  };
+}
+
+export default async function RootLayout({
   children,
-}: Readonly<{
+  params,
+}: {
   children: React.ReactNode;
-}>) {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  const isEn = lang === "en";
+
   return (
-    <html lang="ar" dir="rtl">
-      <body className={`${scheherazade.variable} font-scheherazade antialiased`}>
+    <html lang={lang} dir={isEn ? "ltr" : "rtl"}>
+      <body
+        className={`${scheherazade.variable} ${
+          isEn ? "font-sans" : "font-scheherazade"
+        } antialiased bg-white text-slate-800`}
+      >
         {children}
       </body>
     </html>
   );
-}
-
-export function generateStaticParams() {
-  return [{ lang: "ar" }, { lang: "en" }];
 }
