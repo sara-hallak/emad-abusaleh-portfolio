@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { getTranslations } from "@/data/translations";
@@ -112,7 +113,7 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
   return (
     <section
       id="services"
-      className="w-full bg-white py-10 sm:py-14 lg:py-16 overflow-hidden"
+      className="w-full bg-white py-10 sm:py-14 lg:py-16 overflow-hidden text-start"
       dir={isEn ? "ltr" : "rtl"}
     >
       <div className="max-w-[1260px] w-full mx-auto px-4 sm:px-6 lg:px-12">
@@ -209,11 +210,11 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
                     </p>
                   </div>
 
-                  {/* رابط الاستكشاف مع سهم متكيف */}
+                  {/* رابط الاستكشاف الذي ينقلك للصفحة الداخلية للخدمة */}
                   <div className="mt-5 flex justify-end">
-                    <button
-                      onClick={() => onSelectService?.(activeService.id)}
-                      className="group/btn inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-white/90 hover:text-white py-1 px-2.5 rounded-lg hover:bg-white/10 transition-all cursor-pointer"
+                    <Link
+                      href={`/${currentLang}/services/${activeService.id}`}
+                      className="group/btn inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-white/90 hover:text-white py-1.5 px-3 rounded-lg hover:bg-white/10 transition-all cursor-pointer"
                     >
                       <span className="relative font-sans">
                         {t.services.exploreBtn}
@@ -223,10 +224,16 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
                           }`}
                         />
                       </span>
-                      <span className="text-sm transition-transform duration-200 group-hover/btn:translate-x-1">
+                      <span
+                        className={`text-sm transition-transform duration-200 ${
+                          isEn
+                            ? "group-hover/btn:translate-x-1"
+                            : "group-hover/btn:-translate-x-1"
+                        }`}
+                      >
                         {isEn ? "→" : "←"}
                       </span>
-                    </button>
+                    </Link>
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -254,7 +261,10 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
                     delay: 0.1 + index * 0.08,
                     ease: "easeOut",
                   }}
-                  onClick={() => setActiveId(service.id)}
+                  onClick={() => {
+                    setActiveId(service.id);
+                    onSelectService?.(service.id);
+                  }}
                   className="group w-full py-3.5 sm:py-4 px-3.5 flex items-center justify-between gap-3 text-start transition-colors duration-200 hover:bg-[#F8FAFC] rounded-xl cursor-pointer"
                 >
                   <div className="flex items-center gap-3 sm:gap-4 min-w-0">
@@ -291,7 +301,13 @@ export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
                     </div>
                   </div>
 
-                  <span className="text-gray-300 group-hover:text-[#1874C7] text-xs sm:text-sm transition-transform duration-200 group-hover:translate-x-1 shrink-0">
+                  <span
+                    className={`text-gray-300 group-hover:text-[#1874C7] text-xs sm:text-sm transition-transform duration-200 shrink-0 ${
+                      isEn
+                        ? "group-hover:translate-x-1"
+                        : "group-hover:-translate-x-1"
+                    }`}
+                  >
                     {isEn ? "→" : "←"}
                   </span>
                 </motion.button>
